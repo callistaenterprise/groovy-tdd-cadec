@@ -44,6 +44,7 @@
                 <entry key="html" value="text/html" />
                 <entry key="xml" value="application/xml" />
                 <entry key="atom" value="application/atom+xml" />
+                <entry key="json" value="application/json" />
             </map>
         </property>
     </bean>
