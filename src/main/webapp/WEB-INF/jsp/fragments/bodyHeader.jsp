@@ -7,7 +7,7 @@
 <div class="navbar" style="width: 601px;">
     <div class="navbar-inner">
         <ul class="nav">
-            <li style="width: 100px;"><a href="<spring:url value="/" htmlEscape="true" />"><i class="icon-home"></i>
+            <li style="width: 100px;"><a href="<spring:url value="/home.html" htmlEscape="true" />"><i class="icon-home"></i>
                 Home</a></li>
             <li style="width: 130px;"><a href="<spring:url value="/owners/find.html" htmlEscape="true" />"><i
                     class="icon-search"></i> Find owners</a></li>
