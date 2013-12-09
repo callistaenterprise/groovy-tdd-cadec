@@ -1,0 +1,6 @@
+|Import|
+|org.springframework.samples.petclinic.slim|
+
+!|Config|
+|property|value|
+|geb.env|${geb.env}|

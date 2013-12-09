@@ -69,26 +69,18 @@
 		<dandelion.datatables.version>0.9.2</dandelion.datatables.version>
 
 		<mysql.version>5.1.22</mysql.version>
+		
+		<!-- FitNesse launcher propertis -->
+	    <fitnesse.port>9123</fitnesse.port>
+	    <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
 
+		<!--  Geb properties -->
+	    <selenium.version>2.37.0</selenium.version>
+	    <geb.env>firefox</geb.env>
+		
 	</properties>
 
 	<dependencies>
-	    <dependency>
-	      <groupId>org.codehaus.groovy</groupId>
-	      <artifactId>groovy-all</artifactId>
-	      <version>${groovy.version}</version>
-	    </dependency>
-	    <dependency>
-	      <groupId>org.codehaus.groovy.modules.http-builder</groupId>
-	      <artifactId>http-builder</artifactId>
-	      <version>${groovy.httpBuilder.version}</version>
-	      <exclusions>
-	        <exclusion>
-	          <groupId>org.codehaus.groovy</groupId>
-	          <artifactId>groovy</artifactId>
-	        </exclusion>
-	      </exclusions>
-	    </dependency>
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
@@ -298,6 +290,96 @@
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovy.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy.modules.http-builder</groupId>
+			<artifactId>http-builder</artifactId>
+			<version>${groovy.httpBuilder.version}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-core</artifactId>
+			<version>0.7-groovy-2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.fitnesse</groupId>
+			<artifactId>fitnesse</artifactId>
+			<version>20131110</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.skyscreamer</groupId>
+			<artifactId>jsonassert</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.gebish</groupId>
+			<artifactId>geb-core</artifactId>
+			<version>0.9.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.gebish</groupId>
+			<artifactId>geb-spock</artifactId>
+			<version>0.9.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-firefox-driver</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-safari-driver</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-remote-driver</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-htmlunit-driver</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -454,6 +536,12 @@
 					<includes>
 						<include>**/*Tests.java</include>
 					</includes>
+					<systemProperties>
+						<property>
+							<name>java.awt.headless</name>
+							<value>true</value>
+						</property>
+					</systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -510,7 +598,113 @@
 					<path>/petclinic</path>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>src/test/fitnesse</directory>
+							<excludes>
+								 <exclude>FitNesseRoot/PetClinic/**</exclude>
+								 <exclude>FitNesseRoot/FrontPage/**</exclude>
+								 <exclude>FitNesseRoot/PageFooter/**</exclude>
+							 </excludes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>uk.co.javahelp.fitnesse</groupId>
+				<artifactId>fitnesse-launcher-maven-plugin</artifactId>
+				<version>1.4.0-20131209</version>
+				<configuration>
+					<port>${fitnesse.port}</port>
+					<workingDir>${fitnesse.working}</workingDir>
+					<root>${fitnesse.root}</root>
+					<createSymLink>false</createSymLink>
+					<markerFile>${project.build.directory}/fitnesse-launcher-plugin-marker</markerFile>
+					<suite>PetClinic</suite>
+					<useProjectDependencies>
+						<scope>compile</scope>
+						<scope>test</scope>
+					</useProjectDependencies>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>wiki</id>
+			<!-- This profile is for use when writing tests using the FitNesse wiki. 
+				Simply run 'mvn verify -P wiki' and use a browser to visit http://localhost:9123/JavaExample -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>uk.co.javahelp.fitnesse</groupId>
+						<artifactId>fitnesse-launcher-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>set-up</goal>
+									<goal>wiki</goal>
+									<goal>tear-down</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>auto</id>
+			<!-- This profile will boot FitNesse to automatically run the configured 
+				test suite. Simply run 'mvn verify -P auto' -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>uk.co.javahelp.fitnesse</groupId>
+						<artifactId>fitnesse-launcher-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>set-up</goal>
+									<goal>run-tests</goal>
+									<goal>tear-down</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>thirdparty</id>
+			<url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>thirdparty-plugin</id>
+			<url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>

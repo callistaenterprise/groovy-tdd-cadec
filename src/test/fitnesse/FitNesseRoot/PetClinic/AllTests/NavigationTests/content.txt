@@ -1,0 +1,8 @@
+|script|Navigation|
+|ensure|first page is home page|
+|navigate to find owners page|
+|ensure|at find owners page|
+|navigate to vets page|
+|ensure|at vets page|
+|navigate to home page|
+|ensure|at home page|
