@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.web;
+package org.springframework.samples.petclinic.view;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +66,7 @@ public class VetsAtomView extends AbstractAtomFeedView {
 
             entries.add(entry);
         }
+        
         response.setContentType("blabla");
         return entries;
 

@@ -47,7 +47,6 @@ public class OwnerController {
 
     private final ClinicService clinicService;
 
-
     @Autowired
     public OwnerController(ClinicService clinicService) {
         this.clinicService = clinicService;

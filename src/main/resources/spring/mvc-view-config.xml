@@ -42,7 +42,7 @@
         <property name="mediaTypes">
             <map>
                 <entry key="html" value="text/html" />
-                <entry key="xml" value="application/xml" />
+                <entry key="xml"  value="application/xml" />
                 <entry key="atom" value="application/atom+xml" />
                 <entry key="json" value="application/json" />
             </map>
@@ -50,7 +50,19 @@
     </bean>
 
     <!-- Renders an Atom feed of the visits. Used by the BeanNameViewResolver  -->
-    <bean id="vets/vetList.atom" class="org.springframework.samples.petclinic.web.VetsAtomView"/>
+    <bean id="vets/vetList.atom" class="org.springframework.samples.petclinic.view.VetsAtomView"/>
+
+    <!-- Renders an JSON View. Used by the BeanNameViewResolver  -->
+    <!--
+    <bean id="vets/vetList.json" class="org.springframework.samples.petclinic.view.JsonViewResolver"/>
+	-->
+
+    <!-- Renders an XML view. Used by the BeanNameViewResolver  -->
+    <!--  
+    <bean id="vets/vetList.xml" class="org.springframework.samples.petclinic.view.MarshallingXmlViewResolver">
+        <property name="marshaller" ref="marshaller"/>
+    </bean>
+    -->
 
     <!-- Renders an XML view. Used by the BeanNameViewResolver  -->
     <bean id="vets/vetList.xml" class="org.springframework.web.servlet.view.xml.MarshallingView">
@@ -59,7 +71,7 @@
 
     <oxm:jaxb2-marshaller id="marshaller">
         <!-- Object-XML mapping declared using annotations inside 'Vets' -->
-        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Vets"/>
+        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Vets"/>        
     </oxm:jaxb2-marshaller>
  
 
