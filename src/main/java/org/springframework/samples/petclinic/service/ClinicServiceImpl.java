@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.service;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.samples.petclinic.repository.OwnerRepository;
 import org.springframework.samples.petclinic.repository.PetRepository;
 import org.springframework.samples.petclinic.repository.VetRepository;
 import org.springframework.samples.petclinic.repository.VisitRepository;
+import org.springframework.samples.petclinic.util.PriceCalculator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,8 +86,15 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     @Transactional
     public void saveVisit(Visit visit) throws DataAccessException {
+        calculatePrice(visit);
         visitRepository.save(visit);
         confirmationService.sendConfirmationMessage(visit);
+    }
+
+    private void calculatePrice(Visit visit) {
+      PriceCalculator calculator = new PriceCalculator();
+      BigDecimal price = calculator.calculate(visit.getDate(), visit.getPet());
+      visit.setPrice(price);
     }
 
 

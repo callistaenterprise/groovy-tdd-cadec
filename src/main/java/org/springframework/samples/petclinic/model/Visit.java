@@ -15,6 +15,8 @@
  */
 package org.springframework.samples.petclinic.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -56,6 +58,12 @@ public class Visit extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
+
+    /**
+     * Holds value of property price.
+     */
+    @Column(name = "price")
+    private BigDecimal price;
 
 
     /**
@@ -118,6 +126,23 @@ public class Visit extends BaseEntity {
      */
     public void setPet(Pet pet) {
         this.pet = pet;
+    }
+    /**
+     * Getter for property price.
+     *
+     * @return Value of property price.
+     */
+    public BigDecimal getPrice() {
+        return this.price;
+    }
+
+    /**
+     * Setter for property price.
+     *
+     * @param pet New value of property price.
+     */
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
 }

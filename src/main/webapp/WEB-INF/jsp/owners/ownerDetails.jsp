@@ -68,12 +68,14 @@
                         <tr>
                             <th>Visit Date</th>
                             <th>Description</th>
+                            <th>Price</th>
                         </tr>
                         </thead>
                         <c:forEach var="visit" items="${pet.visits}">
                             <tr>
                                 <td><joda:format value="${visit.date}" pattern="yyyy-MM-dd"/></td>
                                 <td><c:out value="${visit.description}"/></td>
+                                <td><c:out value="${visit.price}"/></td>
                             </tr>
                         </c:forEach>
                         <tr>
