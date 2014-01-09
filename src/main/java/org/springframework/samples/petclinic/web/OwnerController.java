@@ -21,7 +21,9 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Owners;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +33,8 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,7 +61,29 @@ public class OwnerController {
         dataBinder.setDisallowedFields("id");
     }
 
-    @RequestMapping(value = "/owners/new", method = RequestMethod.GET)
+    // ******* RESTful services ********
+    
+	@RequestMapping(value="/owners", produces={"application/xml", "application/json"})
+	@ResponseStatus(HttpStatus.OK)	
+	public @ResponseBody Owners listOwners() {
+		return listOwners("");
+	}
+    
+	@RequestMapping(value="/owners/{lastName}", produces={"application/xml", "application/json"})
+	@ResponseStatus(HttpStatus.OK)	
+	public @ResponseBody Owners listOwners(@PathVariable("lastName") String lastName) {
+		if (lastName == null) {
+			lastName = "";
+		}
+		
+		Owners owners = new Owners();
+		owners.getOwnerList().addAll(this.clinicService.findOwnerByLastName(lastName));
+      	return owners;
+	}
+    
+    // ******* View services ********
+
+	@RequestMapping(value = "/owners/new", method = RequestMethod.GET)
     public String initCreationForm(Map<String, Object> model) {
         Owner owner = new Owner();
         model.put("owner", owner);
@@ -90,7 +116,7 @@ public class OwnerController {
         }
 
         // find owners by last name
-        Collection<Owner> results = this.clinicService.findOwnerByLastName(owner.getLastName());
+        Collection<Owner> results = listOwners(owner.getLastName()).getOwnerList();
         if (results.size() < 1) {
             // no owners found
             result.rejectValue("lastName", "notFound", "not found");

@@ -15,13 +15,20 @@
  */
 package org.springframework.samples.petclinic.web;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.model.Vets;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author Juergen Hoeller
@@ -40,13 +47,25 @@ public class VetController {
         this.clinicService = clinicService;
     }
 
-    @RequestMapping("/vets")
-    public String showVetList(Map<String, Object> model) {
+    // ******* RESTful services ********
+
+    @RequestMapping(value="/vets", produces={"application/xml", "application/json"})
+	@ResponseStatus(HttpStatus.OK)	
+	public @ResponseBody Vets listVets() {
         // Here we are returning an object of type 'Vets' rather than a collection of Vet objects 
         // so it is simpler for Object-Xml mapping
-        Vets vets = new Vets();
-        vets.getVetList().addAll(this.clinicService.findVets());
-        model.put("vets", vets);
+		Vets vets = new Vets();
+      	vets.getVetList().addAll(this.clinicService.findVets());
+		return vets;
+	}
+	
+    // ******* View services ********
+	
+    @RequestMapping("/vets")
+    public String showVetList(Map<String, Object> model) {
+    	// Call RESTful method to avoid repeating account lookup logic
+        model.put("vets", listVets());
+        // Return the view to use for rendering the response        
         return "vets/vetList";
     }
 

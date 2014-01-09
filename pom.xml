@@ -77,6 +77,9 @@
 		<!--  Geb properties -->
 	    <selenium.version>2.37.0</selenium.version>
 	    <geb.env>firefox</geb.env>
+	    
+	    <!-- JSON -->
+	    <jackson.version>1.9.12</jackson.version>
 		
 	</properties>
 
@@ -109,6 +112,7 @@
 			<version>${jaxb-impl.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- SPRING, SPRING, SPRINGITY SPRING -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -164,11 +168,30 @@
 			<version>${spring-framework.version}</version>
 		</dependency>
 
+		<!-- JSON views -->
+		<dependency>
+		    <groupId>org.codehaus.jackson</groupId>
+		    <artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<!--                  		
+		<dependency>
+    		<groupId>com.fasterxml.jackson.core</groupId>
+    		<artifactId>jackson-core</artifactId>
+    		<version>2.0.4</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.core</groupId>
+    		<artifactId>jackson-databind</artifactId>
+    		<version>2.0.4</version>
+		</dependency>
+		-->
 
 		<!-- Database connection pool 
 		See here for more details on commons-dbcp versus tomcat-jdbc: 
     	http://blog.ippon.fr/2013/03/13/improving-the-performance-of-the-spring-petclinic-sample-application-part-3-of-5/
-    -->
+    	-->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
