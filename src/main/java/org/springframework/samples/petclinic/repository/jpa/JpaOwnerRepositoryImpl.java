@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.support.OpenSessionInViewFilter;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.repository.OwnerRepository;
@@ -41,6 +42,11 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
     @PersistenceContext
     private EntityManager em;
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<Owner> findAll() throws DataAccessException {
+        return this.em.createQuery("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets ORDER BY owner.lastName, owner.firstName").getResultList();
+	}
 
     /**
      * Important: in the current version of this method, we load Owners with all their Pets and Visits while 
@@ -50,6 +56,7 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
      * - Turning on lazy-loading and using {@link OpenSessionInViewFilter}
      */
     @SuppressWarnings("unchecked")
+	@Override
     public Collection<Owner> findByLastName(String lastName) {
         // using 'join fetch' because a single query should load both owners and pets
         // using 'left join fetch' because it might happen that an owner does not have pets yet
@@ -67,7 +74,6 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
         return (Owner) query.getSingleResult();
     }
 
-
     @Override
     public void save(Owner owner) {
     	if (owner.getId() == null) {
@@ -76,7 +82,6 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
     	else {
     		this.em.merge(owner);    
     	}
-
     }
 
 }

@@ -19,10 +19,16 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
@@ -31,10 +37,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 /**
  * Simple JavaBean domain object representing a visit.
  *
- * @author Ken Krebs
+ * @author Magnus Ekstrand
  */
 @Entity
 @Table(name = "visits")
+@XmlRootElement(name = "visit")
+@XmlAccessorType(value = XmlAccessType.FIELD)
 public class Visit extends BaseEntity {
 
     /**
@@ -55,8 +63,10 @@ public class Visit extends BaseEntity {
     /**
      * Holds value of property pet.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "pet_id")
+    @XmlTransient
+    @JsonIgnore
     private Pet pet;
 
     /**
@@ -65,14 +75,12 @@ public class Visit extends BaseEntity {
     @Column(name = "price")
     private BigDecimal price;
 
-
     /**
      * Creates a new instance of Visit for the current date
      */
     public Visit() {
         this.date = new DateTime();
     }
-
 
     /**
      * Getter for property date.

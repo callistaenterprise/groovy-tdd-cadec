@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Models a {@link Vet Vet's} specialty (for example, dentistry).
@@ -25,6 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "specialties")
+@XmlRootElement(name = "speciality")
 public class Specialty extends NamedEntity {
 
 }

@@ -44,9 +44,17 @@ import org.springframework.samples.petclinic.model.Owner;
  * @author Juergen Hoeller
  * @author Sam Brannen
  * @author Michael Isvy
+ * @author Magnus Ekstrand
  */
 public interface OwnerRepository {
 
+    /**
+     * Retrieve all <code>Owner</code>s from the data store.
+     *
+     * @return a <code>Collection</code> of <code>Owner</code>s
+     */
+    Collection<Owner> findAll() throws DataAccessException;
+	
     /**
      * Retrieve <code>Owner</code>s from the data store by last name, returning all owners whose last name <i>starts</i>
      * with the given name.
@@ -67,7 +75,6 @@ public interface OwnerRepository {
      */
     Owner findById(int id) throws DataAccessException;
 
-
     /**
      * Save an <code>Owner</code> to the data store, either inserting or updating it.
      *
@@ -75,6 +82,5 @@ public interface OwnerRepository {
      * @see BaseEntity#isNew
      */
     void save(Owner owner) throws DataAccessException;
-
 
 }

@@ -3,6 +3,8 @@ package org.springframework.samples.petclinic.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -13,13 +15,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Magnus Ekstrand
  */
-@XmlRootElement
+@XmlRootElement(name = "owners")
+@XmlAccessorType(value = XmlAccessType.FIELD)
 public class Owners {
 
+    @XmlElement(name = "owner")
     private List<Owner> owners;
 
-    @XmlElement
-    public List<Owner> getOwnerList() {
+    public List<Owner> getOwners() {
         if (owners == null) {
             owners = new ArrayList<Owner>();
         }

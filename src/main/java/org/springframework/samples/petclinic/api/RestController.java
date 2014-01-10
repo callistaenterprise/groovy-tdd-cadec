@@ -1,12 +1,12 @@
 package org.springframework.samples.petclinic.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.Owners;
+import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetTypes;
+import org.springframework.samples.petclinic.model.Vets;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,42 +31,55 @@ public class RestController {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/owner/{id}", produces={"application/xml", "application/json"})
 	@ResponseStatus(HttpStatus.OK)	
-	public @ResponseBody Owner getOwner(@PathVariable("id") Integer id) {
-		Owner e = clinicService.findOwnerById(id);
-		return e;
+	public @ResponseBody Owner getOwnerById(@PathVariable("id") Integer id) {
+		return clinicService.findOwnerById(id);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/owner/{lastName}", produces={"application/xml", "application/json"})
+	@RequestMapping(method=RequestMethod.GET, value="/owners/{lastName}", produces={"application/xml", "application/json"})
 	@ResponseStatus(HttpStatus.OK)	
-	public @ResponseBody List<Owner> getOwner(@PathVariable("lastName") String lastName) {
-		List<Owner> owners = new ArrayList<Owner>();
-		owners.addAll(clinicService.findOwnerByLastName(lastName));
+	public @ResponseBody Owners getOwnerByLastName(@PathVariable("lastName") String lastName) {
+		Owners owners = new Owners();
+		owners.getOwners().addAll(clinicService.findOwnerByLastName(lastName));
 		return owners;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/owners", produces={"application/xml", "application/json"})
 	@ResponseStatus(HttpStatus.OK)	
-	public @ResponseBody List<Owner> getOwners() {
-		List<Owner> owners = new ArrayList<Owner>();
-		owners.addAll(clinicService.findOwnerByLastName(""));
+	public @ResponseBody Owners getOwners() {
+		Owners owners = new Owners();
+		owners.getOwners().addAll(clinicService.findOwners());
 		return owners;
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/owner")
-	public @ResponseBody void createOwner(@RequestBody Owner owner) {
-		clinicService.saveOwner(owner);
-		//TODO: return something to indicate if it went ok or not 
+	public @ResponseBody String createOwner(@RequestBody Owner owner) {
+		String retMsg = "SUCCESS";
+				
+		try {
+			clinicService.saveOwner(owner);
+		} catch (Exception e) {
+			retMsg = "FAILED: " + e.getMessage(); 
+		}
+			
+		return retMsg;
 	}
 
 	@RequestMapping(method=RequestMethod.PUT, value="/owner/{id}")
-	public @ResponseBody void updateOwner(@RequestBody Owner owner, @PathVariable("id") Integer id) {
-		Owner o = clinicService.findOwnerById(id);
-		if (o == null) {
-			//TODO: return something to indicate if it went ok or not 
+	public @ResponseBody String updateOwner(@RequestBody Owner owner, @PathVariable("id") Integer id) {
+		String retMsg = "SUCCESS";
+
+		try {
+			Owner current = clinicService.findOwnerById(id);
+			if (current == null) {
+				retMsg = "FAILED: Owner doesn't exist i repository. Make a POST to /api/owner to create an owner."; 
+			}
+			// Update owner
+			clinicService.saveOwner(owner);
+		} catch (Exception e) {
+			retMsg = "FAILED: " + e.getMessage(); 
 		}
 		
-		clinicService.saveOwner(owner);
-		//TODO: return something to indicate if it went ok or not 
+		return retMsg;
 	}
 	
 	// ***** PET *****
@@ -75,15 +88,29 @@ public class RestController {
 //  public Pet findPetById(int id) throws DataAccessException;
 //  public void savePet(Pet pet) throws DataAccessException;
 	
-	// ***** VET *****
-	
-//  public Collection<Vet> findVets() throws DataAccessException;
+	@RequestMapping(method=RequestMethod.GET, value="/pet/{id}", produces={"application/xml", "application/json"})
+	@ResponseStatus(HttpStatus.OK)	
+	public @ResponseBody Pet getPet(@PathVariable("id") Integer id) {
+		return clinicService.findPetById(id);
+	}
+
+	@RequestMapping(method=RequestMethod.GET, value="/pet/types", produces={"application/xml", "application/json"})
+	@ResponseStatus(HttpStatus.OK)	
+	public @ResponseBody PetTypes getPetTypes() {
+		PetTypes petTypes = new PetTypes();
+		petTypes.getPetTypes().addAll(clinicService.findPetTypes());
+		return petTypes;
+	}
+
+	// ***** VETERINARIAN *****
 	
 	@RequestMapping(method=RequestMethod.GET, value="/vets", produces={"application/xml", "application/json"})
 	@ResponseStatus(HttpStatus.OK)	
-	public @ResponseBody List<Vet> getVets() {
-		List<Vet> vets = new ArrayList<Vet>();
-		vets.addAll(clinicService.findVets());
+	public @ResponseBody Vets getVets() {
+		// Here we are returning an object of type 'Vets' rather than a collection of Vet objects 
+		// so it is simpler for Object-Xml mapping
+		Vets vets = new Vets();
+    	vets.getVetList().addAll(clinicService.findVets());
 		return vets;
 	}
 	

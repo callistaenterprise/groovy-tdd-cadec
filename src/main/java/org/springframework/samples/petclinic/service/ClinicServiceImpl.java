@@ -58,6 +58,8 @@ public class ClinicServiceImpl implements ClinicService {
         this.confirmationService = confirmationService;
     }
 
+    // ------ public methods -------
+    
     @Override
     @Transactional(readOnly = true)
     public Collection<PetType> findPetTypes() throws DataAccessException {
@@ -77,11 +79,16 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Collection<Owner> findOwners() throws DataAccessException {
+        return ownerRepository.findAll();
+    }
+
+    @Override
     @Transactional
     public void saveOwner(Owner owner) throws DataAccessException {
         ownerRepository.save(owner);
     }
-
 
     @Override
     @Transactional
@@ -90,13 +97,6 @@ public class ClinicServiceImpl implements ClinicService {
         visitRepository.save(visit);
         confirmationService.sendConfirmationMessage(visit);
     }
-
-    private void calculatePrice(Visit visit) {
-      PriceCalculator calculator = new PriceCalculator();
-      BigDecimal price = calculator.calculate(visit.getDate(), visit.getPet());
-      visit.setPrice(price);
-    }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -115,6 +115,14 @@ public class ClinicServiceImpl implements ClinicService {
     @Cacheable(value = "vets")
     public Collection<Vet> findVets() throws DataAccessException {
         return vetRepository.findAll();
+    }
+
+    // ------ private methods -------
+    
+    private void calculatePrice(Visit visit) {
+        PriceCalculator calculator = new PriceCalculator();
+        BigDecimal price = calculator.calculate(visit.getDate(), visit.getPet());
+        visit.setPrice(price);
     }
 
 

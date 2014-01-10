@@ -17,12 +17,14 @@ package org.springframework.samples.petclinic.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Juergen Hoeller
  */
 @Entity
 @Table(name = "types")
+@XmlRootElement(name = "petType")
 public class PetType extends NamedEntity {
 
 }

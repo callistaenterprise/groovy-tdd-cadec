@@ -60,6 +60,8 @@ public class PetController {
         dataBinder.setDisallowedFields("id");
     }
 
+    // ******* View services ********
+    
     @RequestMapping(value = "/owners/{ownerId}/pets/new", method = RequestMethod.GET)
     public String initCreationForm(@PathVariable("ownerId") int ownerId, Map<String, Object> model) {
         Owner owner = this.clinicService.findOwnerById(ownerId);

@@ -29,7 +29,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.beans.support.MutableSortDefinition;
@@ -39,12 +46,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 /**
  * Simple business object representing a pet.
  *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
+ * @author Magnus Ekstrand
  */
 @Entity
 @Table(name = "pets")
+@XmlRootElement(name = "pet")
+@XmlAccessorType(value = XmlAccessType.FIELD)
 public class Pet extends NamedEntity {
 
     @Column(name = "birth_date")
@@ -52,51 +59,47 @@ public class Pet extends NamedEntity {
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private DateTime birthDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "type_id")
-    private PetType type;
+    @XmlTransient
+    @JsonIgnore
+    private PetType petType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "owner_id")
+    @XmlTransient
+    @JsonIgnore
     private Owner owner;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", targetEntity = Visit.class, fetch = FetchType.EAGER)
+    @XmlElementWrapper(name = "visits")
+    @XmlElement(name = "visit")
     private Set<Visit> visits;
 
+    // ---- getters and setters
+    
+    public DateTime getBirthDate() {
+        return this.birthDate;
+    }
 
     public void setBirthDate(DateTime birthDate) {
         this.birthDate = birthDate;
     }
 
-    public DateTime getBirthDate() {
-        return this.birthDate;
+    public PetType getType() {
+        return this.petType;
     }
 
     public void setType(PetType type) {
-        this.type = type;
-    }
-
-    public PetType getType() {
-        return this.type;
-    }
-
-    protected void setOwner(Owner owner) {
-        this.owner = owner;
+        this.petType = type;
     }
 
     public Owner getOwner() {
         return this.owner;
     }
 
-    protected void setVisitsInternal(Set<Visit> visits) {
-        this.visits = visits;
-    }
-
-    protected Set<Visit> getVisitsInternal() {
-        if (this.visits == null) {
-            this.visits = new HashSet<Visit>();
-        }
-        return this.visits;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     public List<Visit> getVisits() {
@@ -110,4 +113,17 @@ public class Pet extends NamedEntity {
         visit.setPet(this);
     }
 
+    // ---- protected methods
+
+    protected Set<Visit> getVisitsInternal() {
+        if (this.visits == null) {
+            this.visits = new HashSet<Visit>();
+        }
+        return this.visits;
+    }
+
+    protected void setVisitsInternal(Set<Visit> visits) {
+        this.visits = visits;
+    }
+    
 }

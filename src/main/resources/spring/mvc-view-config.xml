@@ -53,7 +53,7 @@
         <property name="defaultContentType" value="text/html"/>
         
         <property name="mediaTypes">
-            <map>
+           <map>
                 <entry key="html" value="text/html" />
                 <entry key="xml"  value="application/xml" />
                 <entry key="json"  value="application/json" />
@@ -78,10 +78,14 @@
     -->
 
     <oxm:jaxb2-marshaller id="marshaller">
+        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Pet"/>        
+        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.PetType"/>        
+        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.PetTypes"/>        
         <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Owner"/>
         <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Owners"/>
         <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Vet"/>        
         <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Vets"/>        
+        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Visit"/>        
     </oxm:jaxb2-marshaller>
 
 </beans>

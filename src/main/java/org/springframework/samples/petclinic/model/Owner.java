@@ -24,9 +24,15 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.support.MutableSortDefinition;
@@ -36,15 +42,15 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * Simple JavaBean domain object representing an owner.
  *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Michael Isvy
+ * @author Magnus Ekstrand
  */
 @Entity
 @Table(name = "owners")
+@XmlRootElement(name = "owner")
+@XmlAccessorType(value = XmlAccessType.FIELD)
 public class Owner extends Person {
-    @Column(name = "address")
+
+	@Column(name = "address")
     @NotEmpty
     private String address;
 
@@ -57,10 +63,14 @@ public class Owner extends Person {
     @Digits(fraction = 0, integer = 10)
     private String telephone;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", targetEntity = Pet.class, fetch = FetchType.EAGER)
+    @XmlElementWrapper(name = "pets")
+    @XmlElement(name = "pet", required = true)
     private Set<Pet> pets;
 
-
+    // ----- getters and setters
+    
     public String getAddress() {
         return this.address;
     }
@@ -85,23 +95,19 @@ public class Owner extends Person {
         this.telephone = telephone;
     }
 
-    protected void setPetsInternal(Set<Pet> pets) {
-        this.pets = pets;
-    }
-
-    protected Set<Pet> getPetsInternal() {
-        if (this.pets == null) {
-            this.pets = new HashSet<Pet>();
-        }
-        return this.pets;
-    }
-
     public List<Pet> getPets() {
         List<Pet> sortedPets = new ArrayList<Pet>(getPetsInternal());
         PropertyComparator.sort(sortedPets, new MutableSortDefinition("name", true, true));
         return Collections.unmodifiableList(sortedPets);
     }
 
+    // ----- public methods
+    
+    /**
+     * Add pet to this class' hashset
+     * 
+     * @param pet
+     */
     public void addPet(Pet pet) {
         getPetsInternal().add(pet);
         pet.setOwner(this);
@@ -125,6 +131,7 @@ public class Owner extends Person {
      */
     public Pet getPet(String name, boolean ignoreNew) {
         name = name.toLowerCase();
+        
         for (Pet pet : getPetsInternal()) {
             if (!ignoreNew || !pet.isNew()) {
                 String compName = pet.getName();
@@ -134,20 +141,34 @@ public class Owner extends Person {
                 }
             }
         }
+        
         return null;
     }
 
     @Override
     public String toString() {
         return new ToStringCreator(this)
-
-                .append("id", this.getId())
-                .append("new", this.isNew())
-                .append("lastName", this.getLastName())
-                .append("firstName", this.getFirstName())
-                .append("address", this.address)
-                .append("city", this.city)
-                .append("telephone", this.telephone)
-                .toString();
+            .append("id", this.getId())
+            .append("new", this.isNew())
+            .append("lastName", this.getLastName())
+            .append("firstName", this.getFirstName())
+            .append("address", this.address)
+            .append("city", this.city)
+            .append("telephone", this.telephone)
+            .toString();
     }
+
+    // ----- protected methods
+    
+    protected void setPetsInternal(Set<Pet> pets) {
+        this.pets = pets;
+    }
+
+    protected Set<Pet> getPetsInternal() {
+        if (this.pets == null) {
+            this.pets = new HashSet<Pet>();
+        }
+        return this.pets;
+    }
+    
 }
