@@ -18,6 +18,8 @@ package org.springframework.samples.petclinic.service;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
@@ -42,6 +44,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class ClinicServiceImpl implements ClinicService {
+
+	private static final Logger log = LoggerFactory.getLogger(ClinicServiceImpl.class);
+
+    private PriceCalculator calculator = new PriceCalculator();
 
     private PetRepository petRepository;
     private VetRepository vetRepository;
@@ -95,7 +101,11 @@ public class ClinicServiceImpl implements ClinicService {
     public void saveVisit(Visit visit) throws DataAccessException {
         calculatePrice(visit);
         visitRepository.save(visit);
-        confirmationService.sendConfirmationMessage(visit);
+        try {
+			confirmationService.sendConfirmationMessage(visit);
+		} catch (Throwable t) {
+			log.error("Failed to send confirmation message", t);
+		}
     }
 
     @Override
@@ -120,7 +130,6 @@ public class ClinicServiceImpl implements ClinicService {
     // ------ private methods -------
     
     private void calculatePrice(Visit visit) {
-        PriceCalculator calculator = new PriceCalculator();
         BigDecimal price = calculator.calculate(visit.getDate(), visit.getPet());
         visit.setPrice(price);
     }
