@@ -11,14 +11,14 @@
 
 	<properties>
 
-		<!-- Groovy dependencies -->
-		<groovy.version>2.0.7</groovy.version>
-		<groovy.httpBuilder.version>0.6</groovy.httpBuilder.version>
-
 		<!-- Generic properties -->
 		<java.version>1.6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- Groovy dependencies -->
+		<groovy.version>2.1.7</groovy.version>
+		<groovy.httpBuilder.version>0.6</groovy.httpBuilder.version>
 
 		<!-- Spring -->
 		<spring-framework.version>3.2.5.RELEASE</spring-framework.version>
@@ -51,14 +51,6 @@
 		<!-- RSS -->
 		<rome.version>1.0</rome.version>
 
-<<<<<<< HEAD
-		<!-- Test -->
-		<junit.version>4.11</junit.version>
-		<hamcrest.version>1.3</hamcrest.version>
-		<powermock.version>1.5.2</powermock.version>
-
-=======
->>>>>>> Added test-dependencies to project and extracted dependency versions to
 		<!-- Dates -->
 		<jodatime-hibernate.version>1.3</jodatime-hibernate.version>
 		<jodatime-jsptags.version>1.1.1</jodatime-jsptags.version>
@@ -74,43 +66,36 @@
 	    <!-- MySQL -->
 		<mysql.version>5.1.22</mysql.version>
 
-<<<<<<< HEAD
-		<!-- FitNesse launcher propertis -->
-		<fitnesse.port>9123</fitnesse.port>
-		<fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
+		<!-- JSON -->
+		<jackson.version>2.3.0</jackson.version>
 
-		<!-- Geb properties -->
-		<geb.version>0.9.2</geb.version>
-		<selenium.version>2.39.0</selenium.version>
-		<geb.env>firefox</geb.env>
-	    
-	    <!-- JSON -->
-	    <jackson.version>1.9.12</jackson.version>
-=======
-	    <!-- JSON -->
-	    <jackson.version>1.9.12</jackson.version>
+		<!-- XStream -->
+		<xstream.version>1.2.2</xstream.version>
 
 		<!-- 
-			Test 
+			Test properties
 		-->
 			
-		<junit.version>4.11</junit.version>
+		<gmock.version>0.8.3</gmock.version>
 		<hamcrest.version>1.3</hamcrest.version>
-		<mockito.version>1.9.5</mockito.version>
 		<jsonassert.version>1.2.0</jsonassert.version>
 		<jsonpath.version>0.8.1</jsonpath.version>
+		<junit.version>4.11</junit.version>
+		<mockito.version>1.9.5</mockito.version>
+		<mockito-groovy.version>1.3</mockito-groovy.version>
+		<powermock.version>1.5.2</powermock.version>
+		<selenium.version>2.39.0</selenium.version>
 		<spock.version>0.7-groovy-2.0</spock.version>
+		<xmlunit.version>1.5</xmlunit.version>
 		
 		<!-- FitNesse launcher propertis -->
-	    <fitnesse.port>9123</fitnesse.port>
-	    <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
-	    <fitnesse.version>20131110</fitnesse.version>
+	  <fitnesse.port>9123</fitnesse.port>
+	  <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
+	  <fitnesse.version>20131110</fitnesse.version>
 
-		<!--  Geb properties -->
-	    <selenium.version>2.37.0</selenium.version>
-	    <geb.env>firefox</geb.env>
-	    <geb.version>0.9.2</geb.version>
->>>>>>> Added test-dependencies to project and extracted dependency versions to
+		<!-- Geb properties -->
+		<geb.env>firefox</geb.env>
+		<geb.version>0.9.2</geb.version>
 		
 	</properties>
 
@@ -200,15 +185,30 @@
 
 		<!-- JSON views -->
 		<dependency>
-		    <groupId>org.codehaus.jackson</groupId>
-		    <artifactId>jackson-mapper-asl</artifactId>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-annotations</artifactId>
+		  <version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-core</artifactId>
+		  <version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-databind</artifactId>
+		  <version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
 
 		<!-- Database connection pool 
-		See here for more details on commons-dbcp versus tomcat-jdbc: 
+			See here for more details on commons-dbcp versus tomcat-jdbc: 
     	http://blog.ippon.fr/2013/03/13/improving-the-performance-of-the-spring-petclinic-sample-application-part-3-of-5/
-    	-->
+    -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
@@ -255,8 +255,13 @@
 		</dependency>
 
 		<!-- Databases - Uses HSQL by default -->
-		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
-			<version>${mysql.version}</version> </dependency> -->
+		<!-- 
+			<dependency>
+				<groupId>mysql</groupId> 
+				<artifactId>mysql-connector-java</artifactId> 
+				<version>${mysql.version}</version>
+			</dependency> 
+		-->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -264,9 +269,6 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- For MySql only -->
-		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
-			<version>${mysql.version}</version> </dependency> -->
 		<!-- HIBERNATE -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -278,10 +280,6 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
 		</dependency>
-<<<<<<< HEAD
-
-=======
->>>>>>> Added test-dependencies to project and extracted dependency versions to
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
@@ -315,10 +313,12 @@
 			<artifactId>jquery</artifactId>
 			<version>${webjars-jquery.version}</version>
 		</dependency>
+		
+		<!-- XStream is a simple library to serialize objects to XML and back again -->
 		<dependency>
 			<groupId>xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.2.2</version>
+			<version>${xstream.version}</version>
 		</dependency>
 
 		<!-- AspectJ -->
@@ -361,6 +361,7 @@
 			<version>${spring-framework.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -373,51 +374,61 @@
 		        </exclusion>
 		    </exclusions>
 		</dependency>
+
+		<!-- Use Mockito as mocking library -->
 		<dependency>
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-all</artifactId>
 		    <version>${mockito.version}</version>
 		    <scope>test</scope>
 		</dependency>
-		
 		<dependency>
-		    <groupId>com.jayway.jsonpath</groupId>
-		    <artifactId>json-path</artifactId>
-		    <version>${jsonpath.version}</version>
-		    <scope>test</scope>
+			<groupId>com.cyrusinnovation</groupId>
+			<artifactId>mockito-groovy-support</artifactId>
+			<version>${mockito-groovy.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Use JsonPath when writing assertions for JSON documents returned by the REST API -->
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${jsonpath.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.jayway.jsonpath</groupId>
-		    <artifactId>json-path-assert</artifactId>
-		    <version>${jsonpath.version}</version>
-		    <scope>test</scope>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path-assert</artifactId>
+			<version>${jsonpath.version}</version>
+			<scope>test</scope>
 		</dependency>		
 		
-		<!-- used by Spring MVC Test framework -->
+		<!-- Used by Spring MVC Test framework -->
+		<!-- Use Hamcrest matchers when writing assertions for the responses. Used by Spring MVC Test framework -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- XMLUnit -->
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
-			<version>1.5</version>
+			<version>${xmlunit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- GMock-->
 		<dependency>
 			<groupId>org.gmock</groupId>
 			<artifactId>gmock</artifactId>
-			<version>0.8.3</version>
-			<scope>test</scope>
-	  </dependency>
-		<dependency>
-			<groupId>com.cyrusinnovation</groupId>
-			<artifactId>mockito-groovy-support</artifactId>
-			<version>1.3</version>
+			<version>${gmock.version}</version>
 			<scope>test</scope>
 		</dependency>
+	    
+	    <!-- Powermock -->
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
@@ -430,6 +441,8 @@
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
@@ -447,24 +460,32 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<!-- Spock -->
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
 			<version>${spock.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Fitnesse -->
 		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
 			<version>${fitnesse.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- JsonAssert -->
 		<dependency>
 			<groupId>org.skyscreamer</groupId>
 			<artifactId>jsonassert</artifactId>
 			<version>${jsonassert.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Geb -->
 		<dependency>
 			<groupId>org.gebish</groupId>
 			<artifactId>geb-core</artifactId>
@@ -477,6 +498,8 @@
 			<version>${geb.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Selenium -->	
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server</artifactId>

@@ -53,7 +53,6 @@ public class JpaVisitRepositoryImpl implements VisitRepository {
     	}
     }
 
-
     @Override
     @SuppressWarnings("unchecked")
     public List<Visit> findByPetId(Integer petId) {
@@ -62,4 +61,8 @@ public class JpaVisitRepositoryImpl implements VisitRepository {
         return query.getResultList();
     }
 
+    @Override
+    public Visit findById(Integer id) {
+    	return this.em.find(Visit.class, id);
+    }    
 }

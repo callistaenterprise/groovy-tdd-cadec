@@ -29,12 +29,6 @@ import org.springframework.stereotype.Repository;
 
 /**
  * JPA implementation of the {@link OwnerRepository} interface.
- *
- * @author Mike Keith
- * @author Rod Johnson
- * @author Sam Brannen
- * @author Michael Isvy
- * @since 22.4.2006
  */
 @Repository
 public class JpaOwnerRepositoryImpl implements OwnerRepository {
@@ -42,6 +36,11 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
     @PersistenceContext
     private EntityManager em;
 
+	@Override
+	public void delete(Owner owner) throws DataAccessException {
+		this.em.remove(owner);
+	}
+    
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Owner> findAll() throws DataAccessException {
@@ -83,5 +82,6 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
     		this.em.merge(owner);    
     	}
     }
+
 
 }

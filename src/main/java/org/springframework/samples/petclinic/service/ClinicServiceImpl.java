@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Also a placeholder for @Transactional and @Cacheable annotations
  *
  * @author Michael Isvy
+ * @author Michael Isvy
  */
 @Service
 public class ClinicServiceImpl implements ClinicService {
@@ -66,13 +67,17 @@ public class ClinicServiceImpl implements ClinicService {
 
     // ------ public methods -------
     
-    @Override
-    @Transactional(readOnly = true)
-    public Collection<PetType> findPetTypes() throws DataAccessException {
-        return petRepository.findPetTypes();
-    }
+	@Override
+    @Transactional
+	public void deleteOwnerById(int id) throws DataAccessException {
+		Owner owner = findOwnerById(id);
+		if (owner == null) {
+			throw new RuntimeException("Could not delete owner with id " + id + " because it doesn't exist in repository"); 
+		}
+		ownerRepository.delete(owner);
+	}
 
-    @Override
+	@Override
     @Transactional(readOnly = true)
     public Owner findOwnerById(int id) throws DataAccessException {
         return ownerRepository.findById(id);
@@ -91,11 +96,42 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Pet findPetById(int id) throws DataAccessException {
+        return petRepository.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Collection<PetType> findPetTypes() throws DataAccessException {
+        return petRepository.findPetTypes();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "vets")
+    public Collection<Vet> findVets() throws DataAccessException {
+        return vetRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Visit findVisitById(int id) throws DataAccessException {
+        return visitRepository.findById(id);
+    }
+    
+    @Override
     @Transactional
     public void saveOwner(Owner owner) throws DataAccessException {
         ownerRepository.save(owner);
     }
 
+    @Override
+    @Transactional
+    public void savePet(Pet pet) throws DataAccessException {
+        petRepository.save(pet);
+    }
+    
     @Override
     @Transactional
     public void saveVisit(Visit visit) throws DataAccessException {
@@ -108,31 +144,11 @@ public class ClinicServiceImpl implements ClinicService {
 		}
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Pet findPetById(int id) throws DataAccessException {
-        return petRepository.findById(id);
-    }
-
-    @Override
-    @Transactional
-    public void savePet(Pet pet) throws DataAccessException {
-        petRepository.save(pet);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    @Cacheable(value = "vets")
-    public Collection<Vet> findVets() throws DataAccessException {
-        return vetRepository.findAll();
-    }
-
     // ------ private methods -------
     
     private void calculatePrice(Visit visit) {
         BigDecimal price = calculator.calculate(visit.getDate(), visit.getPet());
         visit.setPrice(price);
     }
-
 
 }
