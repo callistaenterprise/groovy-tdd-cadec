@@ -17,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.joda.time.DateTime;
@@ -36,8 +35,6 @@ import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetBuilder;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.PetTypeBuilder;
-import org.springframework.samples.petclinic.model.Visit;
-import org.springframework.samples.petclinic.model.VisitBuilder;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -95,12 +92,7 @@ public class RestControllerPetTest {
     	.petType(petType)
     	.build();        
 
-		// This conversion will not render Owner in resulting JSON-string
-        // owner in Pet.class is set to JsonIgnore to avoid a cyclic dependency
-        // between Owner and Pet.
-        // TODO: Manually craft a JSON-string having all dependencies
         byte[] json = TestUtil.convertObjectToJsonBytes(first);
-        System.err.println(new String(json));
     
         doAnswer(new Answer<Object>() {
             public Object answer(InvocationOnMock invocation) {
@@ -116,8 +108,8 @@ public class RestControllerPetTest {
         .andExpect(content().string("Created"))
         .andReturn();
 
-		String content = result.getResponse().getContentAsString();
-		System.err.println(content);
+//		String content = result.getResponse().getContentAsString();
+//		System.err.println(content);
         
 		ArgumentCaptor<Pet> argument = ArgumentCaptor.forClass(Pet.class);
 		verify(clinicServiceMock, times(1)).savePet(argument.capture());
@@ -219,7 +211,6 @@ public class RestControllerPetTest {
 	@Test
 	public void update_PetFound_ShouldUpdatePetAndReturnString() throws Exception {
 		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
 
         Owner owner = new OwnerBuilder()
     	.id(1)
@@ -244,7 +235,6 @@ public class RestControllerPetTest {
         
         // create json
 		byte[] json = TestUtil.convertObjectToJsonBytes(pet);
-		System.err.println(new String(json));
     
 		when(clinicServiceMock.findPetById(1)).thenReturn(pet);
         
@@ -262,8 +252,8 @@ public class RestControllerPetTest {
         .andExpect(content().string("Updated"))
         .andReturn();
         
-		String content = result.getResponse().getContentAsString();
-		System.err.println(content);
+//		String content = result.getResponse().getContentAsString();
+//		System.err.println(content);
 		
 		ArgumentCaptor<Pet> argument = ArgumentCaptor.forClass(Pet.class);
 		verify(clinicServiceMock, times(1)).findPetById(1);

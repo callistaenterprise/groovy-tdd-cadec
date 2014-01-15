@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>se.callista.tutorial</groupId>
 	<artifactId>groovy-tdd-cadec</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<name>Groovy TDD Tutorial</name>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<properties>
-
-		<!-- Groovy dependencies -->
-	    <groovy.version>2.1.8</groovy.version>
-	    <groovy.httpBuilder.version>0.6</groovy.httpBuilder.version>
 
 		<!-- Generic properties -->
 		<java.version>1.6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- Groovy dependencies -->
+		<groovy.version>2.1.7</groovy.version>
+		<groovy.httpBuilder.version>0.6</groovy.httpBuilder.version>
 
 		<!-- Spring -->
 		<spring-framework.version>3.2.5.RELEASE</spring-framework.version>
@@ -65,29 +66,36 @@
 	    <!-- MySQL -->
 		<mysql.version>5.1.22</mysql.version>
 
-	    <!-- JSON -->
-	    <jackson.version>2.3.0</jackson.version>
+		<!-- JSON -->
+		<jackson.version>2.3.0</jackson.version>
+
+		<!-- XStream -->
+		<xstream.version>1.2.2</xstream.version>
 
 		<!-- 
-			Test 
+			Test properties
 		-->
 			
-		<junit.version>4.11</junit.version>
+		<gmock.version>0.8.3</gmock.version>
 		<hamcrest.version>1.3</hamcrest.version>
-		<mockito.version>1.9.5</mockito.version>
 		<jsonassert.version>1.2.0</jsonassert.version>
 		<jsonpath.version>0.8.1</jsonpath.version>
+		<junit.version>4.11</junit.version>
+		<mockito.version>1.9.5</mockito.version>
+		<mockito-groovy.version>1.3</mockito-groovy.version>
+		<powermock.version>1.5.2</powermock.version>
+		<selenium.version>2.39.0</selenium.version>
 		<spock.version>0.7-groovy-2.0</spock.version>
+		<xmlunit.version>1.5</xmlunit.version>
 		
 		<!-- FitNesse launcher propertis -->
-	    <fitnesse.port>9123</fitnesse.port>
-	    <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
-	    <fitnesse.version>20131110</fitnesse.version>
+	  <fitnesse.port>9123</fitnesse.port>
+	  <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
+	  <fitnesse.version>20131110</fitnesse.version>
 
-		<!--  Geb properties -->
-	    <selenium.version>2.37.0</selenium.version>
-	    <geb.env>firefox</geb.env>
-	    <geb.version>0.9.2</geb.version>
+		<!-- Geb properties -->
+		<geb.env>firefox</geb.env>
+		<geb.version>0.9.2</geb.version>
 		
 	</properties>
 
@@ -198,9 +206,9 @@
 		</dependency>
 
 		<!-- Database connection pool 
-		See here for more details on commons-dbcp versus tomcat-jdbc: 
+			See here for more details on commons-dbcp versus tomcat-jdbc: 
     	http://blog.ippon.fr/2013/03/13/improving-the-performance-of-the-spring-petclinic-sample-application-part-3-of-5/
-    	-->
+    -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
@@ -228,7 +236,7 @@
 			<artifactId>rome</artifactId>
 			<version>${rome.version}</version>
 		</dependency>
-		
+
 		<!-- Date and Time -->
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -247,14 +255,20 @@
 		</dependency>
 
 		<!-- Databases - Uses HSQL by default -->
-		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> <version>${mysql.version}</version> </dependency> -->
+		<!-- 
+			<dependency>
+				<groupId>mysql</groupId> 
+				<artifactId>mysql-connector-java</artifactId> 
+				<version>${mysql.version}</version>
+			</dependency> 
+		-->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${hsqldb.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<!-- HIBERNATE -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -298,6 +312,13 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery</artifactId>
 			<version>${webjars-jquery.version}</version>
+		</dependency>
+		
+		<!-- XStream is a simple library to serialize objects to XML and back again -->
+		<dependency>
+			<groupId>xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>${xstream.version}</version>
 		</dependency>
 
 		<!-- AspectJ -->
@@ -357,29 +378,33 @@
 		<!-- Use Mockito as mocking library -->
 		<dependency>
 		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-core</artifactId>
+		    <artifactId>mockito-all</artifactId>
 		    <version>${mockito.version}</version>
 		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.cyrusinnovation</groupId>
+			<artifactId>mockito-groovy-support</artifactId>
+			<version>${mockito-groovy.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Use JsonPath when writing assertions for JSON documents returned by the REST API -->
 		<dependency>
-		    <groupId>com.jayway.jsonpath</groupId>
-		    <artifactId>json-path</artifactId>
-		    <version>${jsonpath.version}</version>
-		    <scope>test</scope>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${jsonpath.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.jayway.jsonpath</groupId>
-		    <artifactId>json-path-assert</artifactId>
-		    <version>${jsonpath.version}</version>
-		    <scope>test</scope>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path-assert</artifactId>
+			<version>${jsonpath.version}</version>
+			<scope>test</scope>
 		</dependency>		
 		
-		<!-- 
-			Used by Spring MVC Test framework. 
-			Use Hamcrest matchers when writing assertions for the responses. 
-		-->
+		<!-- Used by Spring MVC Test framework -->
+		<!-- Use Hamcrest matchers when writing assertions for the responses. Used by Spring MVC Test framework -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
@@ -387,13 +412,42 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- XMLUnit -->
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<version>${xmlunit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- GMock-->
+		<dependency>
+			<groupId>org.gmock</groupId>
+			<artifactId>gmock</artifactId>
+			<version>${gmock.version}</version>
+			<scope>test</scope>
+		</dependency>
+	    
+	    <!-- Powermock -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>${groovy.version}</version>
-			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.codehaus.groovy.modules.http-builder</groupId>
 			<artifactId>http-builder</artifactId>
@@ -407,6 +461,7 @@
 			</exclusions>
 		</dependency>
 		
+		<!-- Spock -->
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
@@ -414,6 +469,7 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- Fitnesse -->
 		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
@@ -421,6 +477,7 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- JsonAssert -->
 		<dependency>
 			<groupId>org.skyscreamer</groupId>
 			<artifactId>jsonassert</artifactId>
@@ -428,6 +485,7 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- Geb -->
 		<dependency>
 			<groupId>org.gebish</groupId>
 			<artifactId>geb-core</artifactId>
@@ -441,6 +499,7 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- Selenium -->	
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server</artifactId>
@@ -488,16 +547,14 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!--
-				Force the version of all the spring jars (core, beans, context, ...) 
-				pulled by spring-data-jpa:1.3.4.RELEASE to 3.2.x when spring-data pulls 
-				the 3.1.x versions to prevent some misbehaviors of maven which sometimes 
-				pulls both 3.2.x and 3.1.x versions of spring-core, spring-beans and spring-context
-			-->
+			<!-- Force the version of all the spring jars (core, beans, context, ...) 
+				pulled by spring-data-jpa:1.3.4.RELEASE to 3.2.x when spring-data pulls the 
+				3.1.x versions to prevent some misbehaviors of maven which sometimes pulls 
+				both 3.2.x and 3.1.x versions of spring-core, spring-beans and spring-context -->
 			<dependency>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-					<version>${spring-framework.version}</version>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring-framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -527,12 +584,13 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<!-- Maven plugin versions are mentioned in order to guarantee the build reproducibility in the long term -->
+	<!-- Maven plugin versions are mentioned in order to guarantee the build 
+		reproducibility in the long term -->
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -557,6 +615,30 @@
 										</configurator>
 									</action>
 								</pluginExecution>
+								<!--
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.gmavenplus
+										</groupId>
+										<artifactId>
+											gmavenplus-plugin
+										</artifactId>
+										<versionRange>
+											[1.0-beta-3,)
+										</versionRange>
+										<goals>
+											<goal>generateStubs</goal>
+											<goal>compile</goal>
+											<goal>testGenerateStubs</goal>
+											<goal>testCompile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute></execute>
+									</action>
+								</pluginExecution>
+								  -->
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -565,9 +647,45 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test/groovy</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!--
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>1.0-beta-3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generateStubs</goal>
+							<goal>compile</goal>
+							<goal>testGenerateStubs</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			  -->
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.1</version>
 				<configuration>
 					<compilerId>groovy-eclipse-compiler</compilerId>
 					<compilerArguments>
@@ -586,14 +704,14 @@
 					<dependency>
 						<groupId>org.codehaus.groovy</groupId>
 						<artifactId>groovy-eclipse-batch</artifactId>
-						<version>2.1.8-01</version>
+						<version>2.0.7-03</version>
 					</dependency>
 				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.13</version>
+				<version>2.16</version>
 				<configuration>
 					<includes>
 						<include>**/*Test.*</include>
@@ -668,10 +786,10 @@
 						<fileset>
 							<directory>src/test/fitnesse</directory>
 							<excludes>
-								 <exclude>FitNesseRoot/PetClinic/**</exclude>
-								 <exclude>FitNesseRoot/FrontPage/**</exclude>
-								 <exclude>FitNesseRoot/PageFooter/**</exclude>
-							 </excludes>
+								<exclude>FitNesseRoot/PetClinic/**</exclude>
+								<exclude>FitNesseRoot/FrontPage/**</exclude>
+								<exclude>FitNesseRoot/PageFooter/**</exclude>
+							</excludes>
 						</fileset>
 					</filesets>
 				</configuration>

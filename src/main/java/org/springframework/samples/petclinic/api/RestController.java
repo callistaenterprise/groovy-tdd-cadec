@@ -151,7 +151,6 @@ public class RestController {
 	@ResponseStatus(HttpStatus.OK)	
 	public @ResponseBody String updatePet(@RequestBody String json, @PathVariable("id") Integer id) {
 		String retMsg = "Updated";
-		System.err.println(json);
 		
 		try {
 			Pet oldPet = clinicService.findPetById(id);
@@ -206,8 +205,6 @@ public class RestController {
 	public @ResponseBody String createVisit(@RequestBody String json) {
 		String retMsg = "Created";
 	    
-		System.err.println(json);
-		
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			Visit visit = mapper.readValue(json, Visit.class);	    
@@ -223,8 +220,6 @@ public class RestController {
 	@ResponseStatus(HttpStatus.OK)	
 	public @ResponseBody String updateVisit(@RequestBody String json, @PathVariable("id") Integer id) {
 		String retMsg = "Updated";
-
-		System.err.println(json);
 		
 		try {
 			ObjectMapper mapper = new ObjectMapper();

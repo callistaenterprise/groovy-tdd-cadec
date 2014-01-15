@@ -100,7 +100,6 @@ public class RestControllerVisitTest {
     	.build();        
 
         byte[] json = TestUtil.convertObjectToJsonBytes(visit);
-        System.err.println(new String(json));
     
         doAnswer(new Answer<Object>() {
             public Object answer(InvocationOnMock invocation) {
@@ -116,8 +115,8 @@ public class RestControllerVisitTest {
         .andExpect(content().string("Created"))
         .andReturn();
 
-		String content = result.getResponse().getContentAsString();
-		System.err.println(content);
+//		String content = result.getResponse().getContentAsString();
+//		System.err.println(content);
         
 		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
 		verify(clinicServiceMock, times(1)).saveVisit(argument.capture());
@@ -171,7 +170,6 @@ public class RestControllerVisitTest {
 
         // create json
 		byte[] json = TestUtil.convertObjectToJsonBytes(visit);
-		System.err.println(new String(json));
 
 		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
 		
