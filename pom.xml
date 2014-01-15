@@ -177,10 +177,31 @@
 
 		<!-- JSON views -->
 		<dependency>
-		    <groupId>org.codehaus.jackson</groupId>
-		    <artifactId>jackson-mapper-asl</artifactId>
-			<version>${jackson.version}</version>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-annotations</artifactId>
+		  <version>2.3.0</version>
 		</dependency>
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-core</artifactId>
+		  <version>2.3.0</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-databind</artifactId>
+		  <version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		
+<!-- 		<dependency> -->
+<!-- 		    <groupId>org.codehaus.jackson</groupId> -->
+<!-- 		    <artifactId>jackson-mapper-asl</artifactId> -->
+<!-- 			<version>${jackson.version}</version> -->
+<!-- 		</dependency> -->
 
 		<!-- Database connection pool 
 		See here for more details on commons-dbcp versus tomcat-jdbc: 

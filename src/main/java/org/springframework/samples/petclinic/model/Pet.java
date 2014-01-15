@@ -36,12 +36,18 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 
 /**
  * Simple business object representing a pet.
@@ -54,26 +60,28 @@ import org.springframework.format.annotation.DateTimeFormat;
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class Pet extends NamedEntity {
 
+	@JsonSerialize(using = DateTimeSerializer.class)
     @Column(name = "birth_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private DateTime birthDate;
 
+    //@JsonBackReference("pet-petTypes")    
+    @XmlTransient
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "type_id")
-    @XmlTransient
-    @JsonIgnore
     private PetType petType;
 
+    //@JsonBackReference("owner-pets")
+    @XmlTransient
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "owner_id")
-    @XmlTransient
-    @JsonIgnore
     private Owner owner;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", targetEntity = Visit.class, fetch = FetchType.EAGER)
+    //@JsonManagedReference("pet-visits")
     @XmlElementWrapper(name = "visits")
     @XmlElement(name = "visit")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", targetEntity = Visit.class, fetch = FetchType.EAGER)
     private Set<Visit> visits;
 
     // ---- getters and setters
@@ -108,11 +116,13 @@ public class Pet extends NamedEntity {
         return Collections.unmodifiableList(sortedVisits);
     }
 
+    // ---- protected methods
+
     public void addVisit(Visit visit) {
         getVisitsInternal().add(visit);
         visit.setPet(this);
     }
-
+    
     // ---- protected methods
 
     protected Set<Visit> getVisitsInternal() {

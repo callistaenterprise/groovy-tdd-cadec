@@ -22,7 +22,16 @@
     <context:component-scan
             base-package="org.springframework.samples.petclinic.web,org.springframework.samples.petclinic.api"/>
 
-    <mvc:annotation-driven conversion-service="conversionService" content-negotiation-manager="contentNegotiationManager"/>
+    <mvc:annotation-driven conversion-service="conversionService" content-negotiation-manager="contentNegotiationManager">
+  	</mvc:annotation-driven>
+
+	<!--  
+	<mvc:message-converters register-defaults="true">
+	  <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+	    <property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+	  </bean>
+	</mvc:message-converters>
+	-->
 
     <!--  all resources inside folder src/main/webapp/resources are mapped so they can be refered to inside JSP files
         (see header.jsp for more details) -->

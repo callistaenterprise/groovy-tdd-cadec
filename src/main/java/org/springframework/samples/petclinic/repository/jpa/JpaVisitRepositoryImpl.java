@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.repository.VisitRepository;
 import org.springframework.stereotype.Repository;
@@ -53,7 +54,6 @@ public class JpaVisitRepositoryImpl implements VisitRepository {
     	}
     }
 
-
     @Override
     @SuppressWarnings("unchecked")
     public List<Visit> findByPetId(Integer petId) {
@@ -62,4 +62,8 @@ public class JpaVisitRepositoryImpl implements VisitRepository {
         return query.getResultList();
     }
 
+    @Override
+    public Visit findById(Integer id) {
+    	return this.em.find(Visit.class, id);
+    }    
 }

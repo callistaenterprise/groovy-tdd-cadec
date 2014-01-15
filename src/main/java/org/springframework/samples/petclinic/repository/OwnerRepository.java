@@ -48,6 +48,13 @@ import org.springframework.samples.petclinic.model.Owner;
  */
 public interface OwnerRepository {
 
+	/**
+	 * Remove an <code>Owner</code> from the data store.
+	 * 
+	 * @param owner the <code>Owner</code> to remove
+	 */
+	void delete(Owner owner) throws DataAccessException;
+
     /**
      * Retrieve all <code>Owner</code>s from the data store.
      *
@@ -55,16 +62,6 @@ public interface OwnerRepository {
      */
     Collection<Owner> findAll() throws DataAccessException;
 	
-    /**
-     * Retrieve <code>Owner</code>s from the data store by last name, returning all owners whose last name <i>starts</i>
-     * with the given name.
-     *
-     * @param lastName Value to search for
-     * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty <code>Collection</code> if none
-     *         found)
-     */
-    Collection<Owner> findByLastName(String lastName) throws DataAccessException;
-
     /**
      * Retrieve an <code>Owner</code> from the data store by id.
      *
@@ -74,6 +71,16 @@ public interface OwnerRepository {
      *          if not found
      */
     Owner findById(int id) throws DataAccessException;
+
+    /**
+     * Retrieve <code>Owner</code>s from the data store by last name, returning all owners whose last name <i>starts</i>
+     * with the given name.
+     *
+     * @param lastName Value to search for
+     * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty <code>Collection</code> if none
+     *         found)
+     */
+    Collection<Owner> findByLastName(String lastName) throws DataAccessException;
 
     /**
      * Save an <code>Owner</code> to the data store, either inserting or updating it.

@@ -28,11 +28,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 
 /**
  * Simple JavaBean domain object representing a visit.
@@ -48,6 +53,7 @@ public class Visit extends BaseEntity {
     /**
      * Holds value of property date.
      */
+	@JsonSerialize(using = DateTimeSerializer.class)	
     @Column(name = "visit_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @DateTimeFormat(pattern = "yyyy/MM/dd")
@@ -63,10 +69,10 @@ public class Visit extends BaseEntity {
     /**
      * Holds value of property pet.
      */
+//    @JsonBackReference("pet-visits")
+    @XmlTransient
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "pet_id")
-    @XmlTransient
-    @JsonIgnore
     private Pet pet;
 
     /**
@@ -147,7 +153,7 @@ public class Visit extends BaseEntity {
     /**
      * Setter for property price.
      *
-     * @param pet New value of property price.
+     * @param price New value of property price.
      */
     public void setPrice(BigDecimal price) {
         this.price = price;

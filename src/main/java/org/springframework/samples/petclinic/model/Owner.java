@@ -39,6 +39,10 @@ import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.core.style.ToStringCreator;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 /**
  * Simple JavaBean domain object representing an owner.
  *
@@ -48,6 +52,7 @@ import org.springframework.core.style.ToStringCreator;
 @Table(name = "owners")
 @XmlRootElement(name = "owner")
 @XmlAccessorType(value = XmlAccessType.FIELD)
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Owner extends Person {
 
 	@Column(name = "address")
@@ -63,10 +68,10 @@ public class Owner extends Person {
     @Digits(fraction = 0, integer = 10)
     private String telephone;
 
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", targetEntity = Pet.class, fetch = FetchType.EAGER)
+    //@JsonManagedReference("owner-pets")
     @XmlElementWrapper(name = "pets")
     @XmlElement(name = "pet", required = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", targetEntity = Pet.class, fetch = FetchType.EAGER)
     private Set<Pet> pets;
 
     // ----- getters and setters
