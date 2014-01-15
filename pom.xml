@@ -24,7 +24,6 @@
 		<spring-framework.version>3.2.5.RELEASE</spring-framework.version>
 		<spring-data-jpa.version>1.4.2.RELEASE</spring-data-jpa.version>
 
-
 		<!-- Java EE / Java SE dependencies -->
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
@@ -52,17 +51,19 @@
 		<!-- RSS -->
 		<rome.version>1.0</rome.version>
 
+<<<<<<< HEAD
 		<!-- Test -->
 		<junit.version>4.11</junit.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<powermock.version>1.5.2</powermock.version>
 
+=======
+>>>>>>> Added test-dependencies to project and extracted dependency versions to
 		<!-- Dates -->
 		<jodatime-hibernate.version>1.3</jodatime-hibernate.version>
 		<jodatime-jsptags.version>1.1.1</jodatime-jsptags.version>
 		<jodatime.version>2.3</jodatime.version>
 		<jadira-usertype-core.version>3.1.0.CR8</jadira-usertype-core.version>
-
 
 		<!-- Web dependencies -->
 		<webjars-bootstrap.version>2.3.0</webjars-bootstrap.version>
@@ -70,8 +71,10 @@
 		<webjars-jquery.version>2.0.3-1</webjars-jquery.version>
 		<dandelion.datatables.version>0.9.2</dandelion.datatables.version>
 
+	    <!-- MySQL -->
 		<mysql.version>5.1.22</mysql.version>
 
+<<<<<<< HEAD
 		<!-- FitNesse launcher propertis -->
 		<fitnesse.port>9123</fitnesse.port>
 		<fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
@@ -83,6 +86,31 @@
 	    
 	    <!-- JSON -->
 	    <jackson.version>1.9.12</jackson.version>
+=======
+	    <!-- JSON -->
+	    <jackson.version>1.9.12</jackson.version>
+
+		<!-- 
+			Test 
+		-->
+			
+		<junit.version>4.11</junit.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<mockito.version>1.9.5</mockito.version>
+		<jsonassert.version>1.2.0</jsonassert.version>
+		<jsonpath.version>0.8.1</jsonpath.version>
+		<spock.version>0.7-groovy-2.0</spock.version>
+		
+		<!-- FitNesse launcher propertis -->
+	    <fitnesse.port>9123</fitnesse.port>
+	    <fitnesse.working>${project.basedir}/src/test/fitnesse</fitnesse.working>
+	    <fitnesse.version>20131110</fitnesse.version>
+
+		<!--  Geb properties -->
+	    <selenium.version>2.37.0</selenium.version>
+	    <geb.env>firefox</geb.env>
+	    <geb.version>0.9.2</geb.version>
+>>>>>>> Added test-dependencies to project and extracted dependency versions to
 		
 	</properties>
 
@@ -122,7 +150,6 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring-data-jpa.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
@@ -177,19 +204,6 @@
 		    <artifactId>jackson-mapper-asl</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-
-		<!--                  		
-		<dependency>
-    		<groupId>com.fasterxml.jackson.core</groupId>
-    		<artifactId>jackson-core</artifactId>
-    		<version>2.0.4</version>
-		</dependency>
-		<dependency>
-    		<groupId>com.fasterxml.jackson.core</groupId>
-    		<artifactId>jackson-databind</artifactId>
-    		<version>2.0.4</version>
-		</dependency>
-		-->
 
 		<!-- Database connection pool 
 		See here for more details on commons-dbcp versus tomcat-jdbc: 
@@ -264,7 +278,10 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
 		</dependency>
+<<<<<<< HEAD
 
+=======
+>>>>>>> Added test-dependencies to project and extracted dependency versions to
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
@@ -281,6 +298,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<!-- Webjars (static dependencies distributed as JAR files) -->
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -303,7 +321,40 @@
 			<version>1.2.2</version>
 		</dependency>
 
-		<!-- Test Artifacts -->
+		<!-- AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Dandelion -->
+		<dependency>
+			<groupId>com.github.dandelion</groupId>
+			<artifactId>datatables-jsp</artifactId>
+			<version>${dandelion.datatables.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.dandelion</groupId>
+			<artifactId>datatables-export-itext</artifactId>
+			<version>${dandelion.datatables.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.dandelion</groupId>
+			<artifactId>datatables-servlet2</artifactId>
+			<version>${dandelion.datatables.version}</version>
+		</dependency>
+		
+		<!-- 
+			Test Artifacts 
+		-->
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -315,11 +366,37 @@
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
+		    <exclusions>
+		        <exclusion>
+		            <artifactId>hamcrest-core</artifactId>
+		            <groupId>org.hamcrest</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-all</artifactId>
+		    <version>${mockito.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.jayway.jsonpath</groupId>
+		    <artifactId>json-path</artifactId>
+		    <version>${jsonpath.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.jayway.jsonpath</groupId>
+		    <artifactId>json-path-assert</artifactId>
+		    <version>${jsonpath.version}</version>
+		    <scope>test</scope>
+		</dependency>		
+		
 		<!-- used by Spring MVC Test framework -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
+			<artifactId>hamcrest-all</artifactId>
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -330,17 +407,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-	        <groupId>org.gmock</groupId>
-	        <artifactId>gmock</artifactId>
-	        <version>0.8.3</version>
-	        <scope>test</scope>
-	    </dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
+			<groupId>org.gmock</groupId>
+			<artifactId>gmock</artifactId>
+			<version>0.8.3</version>
 			<scope>test</scope>
-		</dependency>
+	  </dependency>
 		<dependency>
 			<groupId>com.cyrusinnovation</groupId>
 			<artifactId>mockito-groovy-support</artifactId>
@@ -379,19 +450,19 @@
 		<dependency>
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
-			<version>0.7-groovy-2.0</version>
+			<version>${spock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
-			<version>20131110</version>
+			<version>${fitnesse.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.skyscreamer</groupId>
 			<artifactId>jsonassert</artifactId>
-			<version>1.2.0</version>
+			<version>${jsonassert.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -448,37 +519,6 @@
 			<version>${selenium.version}</version>
 			<scope>test</scope>
 		</dependency>
-	
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-
-
-		<!-- Dandelion -->
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-jsp</artifactId>
-			<version>${dandelion.datatables.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-export-itext</artifactId>
-			<version>${dandelion.datatables.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-servlet2</artifactId>
-			<version>${dandelion.datatables.version}</version>
-		</dependency>
-
 
 	</dependencies>
 
