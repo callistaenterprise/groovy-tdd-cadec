@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.model.VisitBuilder;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.samples.petclinic.util.DateUtil;
-import org.springframework.samples.petclinic.util.TestUtil;
+import org.springframework.samples.petclinic.util.JSONUtil;
 import org.springframework.samples.petclinic.util.XMLUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,14 +46,17 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RestControllerVisitTest {
 
-    private MockMvc mockMvc;
-
     @Autowired
     private ClinicService clinicServiceMock;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    private MockMvc mockMvc;
+    private DateTime birthDate;
+	private DateTime visitDate;
+
+    
     @Before
     public void setUp() {
         //We have to reset our mock between tests because the mock objects
@@ -61,12 +65,15 @@ public class RestControllerVisitTest {
         Mockito.reset(clinicServiceMock);
 
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        
+        // Dates
+		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
+		birthDate = DateUtil.getDateTime("2009/05/19", formatter);
+		visitDate = DateUtil.getDateTime("2014/01/14", formatter);
     }
     
 	@Test
 	public void createVisit_ContentAsJson_ShouldCreateNewVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
 
 		Owner owner = new OwnerBuilder()
     	.id(1)
@@ -97,10 +104,10 @@ public class RestControllerVisitTest {
         .price(new BigDecimal(750.00))
     	.build();        
 
-        byte[] json = TestUtil.convertObjectToJsonBytes(visit);
+        byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
 
         mockMvc.perform(post("/api/visits.json")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isCreated())
@@ -124,8 +131,6 @@ public class RestControllerVisitTest {
 
 	@Test
 	public void createVisit_ContentAsXml_ShouldCreateNewVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
 
 		Owner owner = new OwnerBuilder()
     	.id(1)
@@ -158,7 +163,7 @@ public class RestControllerVisitTest {
 
         String xml = XMLUtil.serialize(visit);
         mockMvc.perform(post("/api/visits.xml")
-				.contentType(TestUtil.APPLICATION_XML_UTF8)
+				.contentType(JSONUtil.APPLICATION_XML_UTF8)
 				.content(xml)
 				)
         .andExpect(status().isCreated())
@@ -182,8 +187,6 @@ public class RestControllerVisitTest {
 
 	@Test
 	public void updateVisit_ContentAsJson_ShouldUpdateVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
         
 		Owner owner = new OwnerBuilder()
     	.id(1)
@@ -216,12 +219,12 @@ public class RestControllerVisitTest {
     	.build();        
 
         // create json
-		byte[] json = TestUtil.convertObjectToJsonBytes(visit);
+		byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
 
 		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
 
         mockMvc.perform(put("/api/visits/{id}.json", 1)
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isOk())

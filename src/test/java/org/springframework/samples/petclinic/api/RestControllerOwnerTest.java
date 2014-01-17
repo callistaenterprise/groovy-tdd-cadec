@@ -30,10 +30,8 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.OwnerBuilder;
-import org.springframework.samples.petclinic.repository.VisitRepository;
 import org.springframework.samples.petclinic.service.ClinicService;
-import org.springframework.samples.petclinic.service.ClinicServiceImpl;
-import org.springframework.samples.petclinic.util.TestUtil;
+import org.springframework.samples.petclinic.util.JSONUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -66,6 +64,7 @@ public class RestControllerOwnerTest {
 
 	@Test
 	public void create_NewOwner_ShouldCreateOwnerAndReturnString() throws Exception {
+		
 		Owner first = new OwnerBuilder()
     	.address("Kungsgatan 1")
     	.city("Göteborg")
@@ -73,21 +72,15 @@ public class RestControllerOwnerTest {
     	.lastName("Johansson")
     	.build();
         
-        byte[] json = TestUtil.convertObjectToJsonBytes(first);
+        byte[] json = JSONUtil.convertObjectToJsonBytes(first);
     
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Created";
-            }}).when(clinicServiceMock).saveOwner(any(Owner.class));
-
 		mockMvc.perform(post("/api/owners.json")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
-        .andExpect(content().string("Created"))
-        .andReturn();
+        .andExpect(content().string("Created"));
 		
 		ArgumentCaptor<Owner> argument = ArgumentCaptor.forClass(Owner.class);
 		verify(clinicServiceMock, times(1)).saveOwner(argument.capture());
@@ -107,13 +100,8 @@ public class RestControllerOwnerTest {
 	@Test
 	public void deleteById_OwnerFound_ShouldDeleteOwnerAndReturnString() throws Exception {
         
-		doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Deleted";
-            }}).when(clinicServiceMock).deleteOwnerById(1);
-
 		mockMvc.perform(delete("/api/owners/{id}.json", 1)
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -125,6 +113,7 @@ public class RestControllerOwnerTest {
     
 	@Test
 	public void getOwnerById_OwnerFound_ShouldReturnSingleOwnerAsJson() throws Exception {
+		
         Owner first = new OwnerBuilder()
     	.id(1)
     	.address("Kungsgatan 1")
@@ -137,7 +126,7 @@ public class RestControllerOwnerTest {
 
 		mockMvc.perform(get("/api/owner/{id}.json", 1))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(JSONUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.id", is(1)))
 		    .andExpect(jsonPath("$.address", is("Kungsgatan 1")))
 		    .andExpect(jsonPath("$.city", is("Göteborg")))
@@ -150,6 +139,7 @@ public class RestControllerOwnerTest {
 
 	@Test
 	public void getOwnerByLastName_OwnerFound_ShouldReturnSingleOwnerAsJson() throws Exception {
+		
         Owner first = new OwnerBuilder()
     	.id(1)
     	.address("Kungsgatan 2")
@@ -162,7 +152,7 @@ public class RestControllerOwnerTest {
 
 		mockMvc.perform(get("/api/owners/{lastName}.json", "Hansson"))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(JSONUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.owners[0].id", is(1)))
 		    .andExpect(jsonPath("$.owners[0].address", is("Kungsgatan 2")))
 		    .andExpect(jsonPath("$.owners[0].city", is("Göteborg")))
@@ -175,6 +165,7 @@ public class RestControllerOwnerTest {
 
 	@Test
 	public void getOwnerByLastName_OwnersFound_ShouldReturnMultipleOwnersAsJson() throws Exception {
+		
         Owner first = new OwnerBuilder()
     	.id(1)
     	.address("Kungsgatan 1")
@@ -195,7 +186,7 @@ public class RestControllerOwnerTest {
 
 		mockMvc.perform(get("/api/owners/{lastName}.json", "Hansson"))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(JSONUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.owners", hasSize(2)))
 		    .andExpect(jsonPath("$.owners[0].id", is(1)))
 		    .andExpect(jsonPath("$.owners[0].address", is("Kungsgatan 1")))
@@ -214,6 +205,7 @@ public class RestControllerOwnerTest {
 
 	@Test
 	public void getOwners_OwnersFound_ShouldReturnAllOwnersAsJson() throws Exception {
+		
         Owner first = new OwnerBuilder()
     	.id(1)
     	.address("Kungsgatan 1")
@@ -234,7 +226,7 @@ public class RestControllerOwnerTest {
 		
 		mockMvc.perform(get("/api/owners.json"))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(JSONUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.owners", hasSize(2)))
 		    .andExpect(jsonPath("$.owners[0].id", is(1)))
 		    .andExpect(jsonPath("$.owners[0].address", is("Kungsgatan 1")))
@@ -253,6 +245,7 @@ public class RestControllerOwnerTest {
 
 	@Test
 	public void update_OwnerFound_ShouldUpdateOwnerAndReturnString() throws Exception {
+		
 		Owner first = new OwnerBuilder()
 		.id(1)
     	.address("Kungsgatan 1")
@@ -269,7 +262,7 @@ public class RestControllerOwnerTest {
     	.telephone("031-111213")
     	.build();
 
-		byte[] json = TestUtil.convertObjectToJsonBytes(second);
+		byte[] json = JSONUtil.convertObjectToJsonBytes(second);
     
 		when(clinicServiceMock.findOwnerById(1)).thenReturn(first);
         
@@ -279,7 +272,7 @@ public class RestControllerOwnerTest {
             }}).when(clinicServiceMock).saveOwner(any(Owner.class));
 
 		mockMvc.perform(put("/api/owners/{id}.json", 1)
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isOk())

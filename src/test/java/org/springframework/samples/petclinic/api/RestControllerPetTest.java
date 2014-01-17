@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +36,8 @@ import org.springframework.samples.petclinic.model.PetBuilder;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.PetTypeBuilder;
 import org.springframework.samples.petclinic.service.ClinicService;
-import org.springframework.samples.petclinic.util.TestUtil;
+import org.springframework.samples.petclinic.util.DateUtil;
+import org.springframework.samples.petclinic.util.JSONUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -49,7 +51,6 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RestControllerPetTest {
 
-    private MockMvc mockMvc;
 
     @Autowired
     private ClinicService clinicServiceMock;
@@ -57,6 +58,9 @@ public class RestControllerPetTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    private MockMvc mockMvc;
+    private DateTime birthDate;
+    
     @Before
     public void setUp() {
         //We have to reset our mock between tests because the mock objects
@@ -65,11 +69,13 @@ public class RestControllerPetTest {
         Mockito.reset(clinicServiceMock);
 
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        
+		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
+		birthDate = DateUtil.getDateTime("2009/05/19", formatter);
     }        
 
 	@Test
 	public void create_NewPet_ShouldCreatePetAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2010/03/23");
 
 		Owner owner = new OwnerBuilder()
     	.id(1)
@@ -92,24 +98,15 @@ public class RestControllerPetTest {
     	.petType(petType)
     	.build();        
 
-        byte[] json = TestUtil.convertObjectToJsonBytes(first);
-    
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Created";
-            }}).when(clinicServiceMock).savePet(any(Pet.class));
+        byte[] json = JSONUtil.convertObjectToJsonBytes(first);
 
-        MvcResult result = mockMvc.perform(post("/api/pets.json")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+        mockMvc.perform(post("/api/pets.json")
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
-        .andExpect(content().string("Created"))
-        .andReturn();
-
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
+        .andExpect(content().string("Created"));
         
 		ArgumentCaptor<Pet> argument = ArgumentCaptor.forClass(Pet.class);
 		verify(clinicServiceMock, times(1)).savePet(argument.capture());
@@ -117,7 +114,7 @@ public class RestControllerPetTest {
 		
 		Pet value = argument.getValue();
 		assertNull(value.getId());
-		assertThat(value.getBirthDate().getMillis(), is(1269298800000L));
+		assertThat(DateUtil.getDateTimeFormatter(DateUtil.PRINT_FORMAT).print(value.getBirthDate()), is("2009/05/19"));
 		assertThat(value.getName(), is("Fido"));
 		assertThat(value.getType().getId(), is(1));
 		assertThat(value.getType().getName(), is("Hund"));
@@ -127,7 +124,6 @@ public class RestControllerPetTest {
 	
 	@Test
 	public void getPetById_PetFound_ShouldReturnSinglePetAsJson() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2010/03/23");
 		
         Owner owner = new OwnerBuilder()
     	.id(1)
@@ -152,19 +148,15 @@ public class RestControllerPetTest {
     
 		when(clinicServiceMock.findPetById(1)).thenReturn(first);
 
-	    MvcResult result = mockMvc.perform(get("/api/pets/{id}.json", 1))
+	    mockMvc.perform(get("/api/pets/{id}.json", 1))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(JSONUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.id", is(1)))
-		    .andExpect(jsonPath("$.birthDate", is(1269298800000L)))
+		    .andExpect(jsonPath("$.birthDate", is(1242684000000L)))
 		    .andExpect(jsonPath("$.name", is("Fido")))
 		    .andExpect(jsonPath("$.type.id", is(1)))
 		    .andExpect(jsonPath("$.type.name", is("Hund")))
-		    .andExpect(jsonPath("$.visits", hasSize(0)))
-        	.andReturn();
-
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
+		    .andExpect(jsonPath("$.visits", hasSize(0)));
 		
 		verify(clinicServiceMock, times(1)).findPetById(1);
 		verifyNoMoreInteractions(clinicServiceMock);		
@@ -189,20 +181,16 @@ public class RestControllerPetTest {
 
 		when(clinicServiceMock.findPetTypes()).thenReturn(Arrays.asList(first, second, third));
 		
-		MvcResult result = mockMvc.perform(get("/api/pets/types.json"))
+		mockMvc.perform(get("/api/pets/types.json"))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(JSONUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.petTypes", hasSize(3)))
 		    .andExpect(jsonPath("$.petTypes[0].id", is(1)))
 		    .andExpect(jsonPath("$.petTypes[0].name", is("Hund")))
 		    .andExpect(jsonPath("$.petTypes[1].id", is(2)))
 		    .andExpect(jsonPath("$.petTypes[1].name", is("Katt")))
 		    .andExpect(jsonPath("$.petTypes[2].id", is(3)))
-		    .andExpect(jsonPath("$.petTypes[2].name", is("Ödla")))
-        	.andReturn();
-
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
+		    .andExpect(jsonPath("$.petTypes[2].name", is("Ödla")));
 		
 		verify(clinicServiceMock, times(1)).findPetTypes();
 		verifyNoMoreInteractions(clinicServiceMock);		
@@ -210,7 +198,6 @@ public class RestControllerPetTest {
 
 	@Test
 	public void update_PetFound_ShouldUpdatePetAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
 
         Owner owner = new OwnerBuilder()
     	.id(1)
@@ -234,26 +221,17 @@ public class RestControllerPetTest {
     	.build();
         
         // create json
-		byte[] json = TestUtil.convertObjectToJsonBytes(pet);
+		byte[] json = JSONUtil.convertObjectToJsonBytes(pet);
     
 		when(clinicServiceMock.findPetById(1)).thenReturn(pet);
         
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Updated";
-            }}).when(clinicServiceMock).savePet(pet);
-
-        MvcResult result = mockMvc.perform(put("/api/pets/{id}.json", 1)
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+        mockMvc.perform(put("/api/pets/{id}.json", 1)
+				.contentType(JSONUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
-        .andExpect(content().string("Updated"))
-        .andReturn();
-        
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
+        .andExpect(content().string("Updated"));
 		
 		ArgumentCaptor<Pet> argument = ArgumentCaptor.forClass(Pet.class);
 		verify(clinicServiceMock, times(1)).findPetById(1);
