@@ -1,7 +1,9 @@
 package org.springframework.samples.petclinic.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Owners;
 import org.springframework.samples.petclinic.model.Pet;
@@ -9,6 +11,7 @@ import org.springframework.samples.petclinic.model.PetTypes;
 import org.springframework.samples.petclinic.model.Vets;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.samples.petclinic.util.XMLUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -202,12 +205,12 @@ public class RestController {
 	
 	@RequestMapping(method=RequestMethod.POST, value="/visits", consumes="application/json;charset=UTF-8", produces="application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.CREATED)	
-	public @ResponseBody String createVisit(@RequestBody String json) {
+	public @ResponseBody String createVisitJSON(@RequestBody String body) {
 		String retMsg = "Created";
-	    
+		
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			Visit visit = mapper.readValue(json, Visit.class);	    
+			Visit visit = mapper.readValue(body, Visit.class);
 			clinicService.saveVisit(visit);
 		} catch (Exception e) {
 			retMsg = "FAILED: " + (e.getMessage() == null ? e.getCause().getMessage() : e.getMessage()); 
@@ -215,15 +218,29 @@ public class RestController {
 			
 		return retMsg;
 	}
+
+	@RequestMapping(method=RequestMethod.POST, value="/visits", consumes="application/xml;charset=UTF-8")	
+	public @ResponseBody ResponseEntity<String> createVisitXML(@RequestBody String body) {
+		String retMsg = "Created";
+		
+		try {
+			Visit visit = (Visit) XMLUtil.deserialize(body, new Visit());
+			clinicService.saveVisit(visit);
+		} catch (Exception e) {
+			retMsg = "FAILED: " + (e.getMessage() == null ? e.getCause().getMessage() : e.getMessage()); 
+		}
+
+		return new ResponseEntity<String>(retMsg, new HttpHeaders(), HttpStatus.CREATED);		
+	}
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/visits/{id}", consumes="application/json;charset=UTF-8", produces="application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)	
-	public @ResponseBody String updateVisit(@RequestBody String json, @PathVariable("id") Integer id) {
+	public @ResponseBody String updateVisit(@RequestBody String body, @PathVariable("id") Integer id) {
 		String retMsg = "Updated";
 		
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			Visit newVisit = mapper.readValue(json, Visit.class);
+			Visit newVisit = mapper.readValue(body, Visit.class);
 			
 			if (newVisit.getId() == null) {
 				throw new RuntimeException("Cannot update visit entity in datasource. New visit object's id is null");

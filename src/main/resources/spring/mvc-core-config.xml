@@ -19,11 +19,11 @@
     <!--
         - POJOs labeled with the @Controller and @Service annotations are auto-detected.
     -->
-    <context:component-scan
-            base-package="org.springframework.samples.petclinic.web,org.springframework.samples.petclinic.api"/>
+    <context:component-scan base-package="
+    	org.springframework.samples.petclinic.web,
+    	org.springframework.samples.petclinic.api"/>
 
-    <mvc:annotation-driven conversion-service="conversionService" content-negotiation-manager="contentNegotiationManager">
-  	</mvc:annotation-driven>
+    <mvc:annotation-driven conversion-service="conversionService" content-negotiation-manager="contentNegotiationManager"/>
 
 	<!--  
 	<mvc:message-converters register-defaults="true">

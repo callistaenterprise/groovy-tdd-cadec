@@ -18,22 +18,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.TestUtil;
 import org.springframework.samples.petclinic.model.SpecialtyBuilder;
 import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.model.VetBuilder;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.samples.petclinic.util.MediaTypeUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:testContext.xml", "classpath:spring/mvc-core-config.xml"})
 @WebAppConfiguration
+@ContextConfiguration(locations = {"classpath:testContext.xml", "classpath:spring/mvc-core-config.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
 public class RestControllerVeterinarianTest {
 
     private MockMvc mockMvc;
@@ -81,9 +80,9 @@ public class RestControllerVeterinarianTest {
 
 		when(clinicServiceMock.findVets()).thenReturn(Arrays.asList(first, second, third));
 		
-		MvcResult result = mockMvc.perform(get("/api/vets.json"))
+		mockMvc.perform(get("/api/vets.json"))
 		    .andExpect(status().isOk())
-		    .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+		    .andExpect(content().contentType(MediaTypeUtil.APPLICATION_JSON_UTF8))
 		    .andExpect(jsonPath("$.vetList", hasSize(3)))
 		    .andExpect(jsonPath("$.vetList[0].id", is(1)))
 		    .andExpect(jsonPath("$.vetList[0].firstName", is("Laura")))
@@ -103,11 +102,7 @@ public class RestControllerVeterinarianTest {
 		    .andExpect(jsonPath("$.vetList[2].lastName", is("Ekstrand")))
 		    .andExpect(jsonPath("$.vetList[2].specialties", hasSize(1)))
 		    .andExpect(jsonPath("$.vetList[2].specialties[0].name", is("häst")))
-		    .andExpect(jsonPath("$.vetList[2].nrOfSpecialties", is(1)))
-        	.andReturn();
-		
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
+		    .andExpect(jsonPath("$.vetList[2].nrOfSpecialties", is(1)));
 		
 		verify(clinicServiceMock, times(1)).findVets();
 		verifyNoMoreInteractions(clinicServiceMock);		

@@ -22,7 +22,6 @@ import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.samples.petclinic.TestUtil
 import org.springframework.samples.petclinic.model.Owner
 import org.springframework.samples.petclinic.model.OwnerBuilder
 import org.springframework.samples.petclinic.model.Pet
@@ -65,8 +64,8 @@ public class GroovyRestControllerVisitTest {
     
 	@Test
 	public void create_NewVisit_ShouldCreateVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
+		DateTime birthDate = DateUtil.getDateTime("2009/05/19");
+		DateTime visitDate = DateUtil.getDateTime("2014/01/14");
 
 		def builder = new ObjectGraphBuilder()
 		builder.identifierResolver = "ref_id"
@@ -83,7 +82,7 @@ public class GroovyRestControllerVisitTest {
 						   {owner(id: 1, address: "Kungsgatan 1", city: "Göteborg", firstName: "Hannes",
 								  lastName: "Johansson", telephone: "031-111213", email: "foo@bar.com")})})		
 
-        byte[] json = TestUtil.convertObjectToJsonBytes(visit);
+        byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
     
         mockMvc.perform(post("/api/visits.json")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -107,8 +106,8 @@ public class GroovyRestControllerVisitTest {
 
 	@Test
 	public void update_VisitFound_ShouldUpdateVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
+		DateTime birthDate = DateUtil.getDateTime("2009/05/19");
+		DateTime visitDate = DateUtil.getDateTime("2014/01/14");
         
 		Owner owner = new OwnerBuilder()
     	.id(1)
@@ -141,7 +140,7 @@ public class GroovyRestControllerVisitTest {
     	.build();        
 
         // create json
-		byte[] json = TestUtil.convertObjectToJsonBytes(visit);
+		byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
 
 		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
 		
