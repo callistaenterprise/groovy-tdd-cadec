@@ -25,7 +25,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
 		xstream.alias("pet", Pet.class);
 		xstream.alias("visit", Visit.class);
 		xstream.omitField(Pet.class, "visits");
-		xstream.useAttributeFor(Pet.class, "type");
+		xstream.useAttributeFor(Pet.class, "petType");
 		xstream.registerConverter(new DateTimeConverter());
 		xstream.registerConverter(new PetTypeConverter());
 		xstream.registerConverter(new OwnerConverter());

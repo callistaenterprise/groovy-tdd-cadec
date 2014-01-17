@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 class GroovyCrashController {
 
-    @RequestMapping(value = "/oups", method = RequestMethod.GET)
+    @RequestMapping(value = "/oops", method = RequestMethod.GET)
     String triggerException() {
     	DateTime now = DateTime.now()
     	boolean isBeforeNoon = now.getHourOfDay() < 12

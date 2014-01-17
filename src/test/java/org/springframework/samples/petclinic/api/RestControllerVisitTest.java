@@ -3,7 +3,6 @@ package org.springframework.samples.petclinic.api;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -21,10 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.TestUtil;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.OwnerBuilder;
 import org.springframework.samples.petclinic.model.Pet;
@@ -34,17 +30,19 @@ import org.springframework.samples.petclinic.model.PetTypeBuilder;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.model.VisitBuilder;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.samples.petclinic.util.DateUtil;
+import org.springframework.samples.petclinic.util.TestUtil;
+import org.springframework.samples.petclinic.util.XMLUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:testContext.xml", "classpath:spring/mvc-core-config.xml"})
 @WebAppConfiguration
+@ContextConfiguration(locations = {"classpath:testContext.xml", "classpath:spring/mvc-core-config.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
 public class RestControllerVisitTest {
 
     private MockMvc mockMvc;
@@ -66,7 +64,7 @@ public class RestControllerVisitTest {
     }
     
 	@Test
-	public void create_NewVisit_ShouldCreateVisitAndReturnString() throws Exception {
+	public void createVisit_ContentAsJson_ShouldCreateNewVisitAndReturnString() throws Exception {
 		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
 		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
 
@@ -100,31 +98,22 @@ public class RestControllerVisitTest {
     	.build();        
 
         byte[] json = TestUtil.convertObjectToJsonBytes(visit);
-    
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Created";
-            }}).when(clinicServiceMock).saveVisit(visit);
 
-        MvcResult result = mockMvc.perform(post("/api/visits.json")
+        mockMvc.perform(post("/api/visits.json")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
-        .andExpect(content().string("Created"))
-        .andReturn();
-
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
-        
+        .andExpect(content().string("Created"));
+       
 		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
 		verify(clinicServiceMock, times(1)).saveVisit(argument.capture());
 		verifyNoMoreInteractions(clinicServiceMock);
 		
 		Visit value = argument.getValue();
 		assertNull(value.getId());
-		assertThat(value.getDate().getMillis(), is(1389654000000L));
+		assertThat(DateUtil.getDateTimeFormatter(DateUtil.PRINT_FORMAT).print(value.getDate()), is("2014/01/14"));
 		assertThat(value.getDescription(), is("bruten svans"));
 		assertThat(value.getPet().getId(), is(3));
 		assertThat(value.getPet().getOwner().getId(), is(1));
@@ -134,7 +123,65 @@ public class RestControllerVisitTest {
 	}
 
 	@Test
-	public void update_VisitFound_ShouldUpdateVisitAndReturnString() throws Exception {
+	public void createVisit_ContentAsXml_ShouldCreateNewVisitAndReturnString() throws Exception {
+		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
+		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
+
+		Owner owner = new OwnerBuilder()
+    	.id(1)
+    	.address("Kungsgatan 1")
+    	.city("Göteborg")
+    	.firstName("Hannes")
+    	.lastName("Johansson")
+    	.telephone("031-111213")
+    	.build();
+		
+        PetType petType = new PetTypeBuilder()
+    	.id(2)
+    	.name("Katt")
+    	.build();
+        
+        Pet pet = new PetBuilder()
+        .id(3)
+    	.birthDate(birthDate)
+    	.name("Spöket")
+    	.owner(owner)
+    	.petType(petType)
+    	.build();
+        
+        Visit visit = new VisitBuilder()
+        .date(visitDate)
+        .description("bruten svans")
+        .pet(pet)
+        .price(new BigDecimal(750.00))
+    	.build();        
+
+        String xml = XMLUtil.serialize(visit);
+        mockMvc.perform(post("/api/visits.xml")
+				.contentType(TestUtil.APPLICATION_XML_UTF8)
+				.content(xml)
+				)
+        .andExpect(status().isCreated())
+        .andExpect(content().contentType("application/xml"))
+        .andExpect(content().string("Created"));
+
+		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
+		verify(clinicServiceMock, times(1)).saveVisit(argument.capture());
+		verifyNoMoreInteractions(clinicServiceMock);
+		
+		Visit value = argument.getValue();
+		assertNull(value.getId());
+		assertThat(DateUtil.getDateTimeFormatter(DateUtil.PRINT_FORMAT).print(value.getDate()), is("2014/01/14"));
+		assertThat(value.getDescription(), is("bruten svans"));
+		assertThat(value.getPet().getId(), is(3));
+		assertThat(value.getPet().getOwner().getId(), is(1));
+		assertThat(value.getPet().getType().getId(), is(2));
+		assertThat(value.getPrice().doubleValue(), is(750.00));
+		assertThat(value.isNew(), is(true));
+	}
+
+	@Test
+	public void updateVisit_ContentAsJson_ShouldUpdateVisitAndReturnString() throws Exception {
 		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
 		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
         
@@ -172,24 +219,15 @@ public class RestControllerVisitTest {
 		byte[] json = TestUtil.convertObjectToJsonBytes(visit);
 
 		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
-		
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Updated";
-            }}).when(clinicServiceMock).saveVisit(visit);
 
-        MvcResult result = mockMvc.perform(put("/api/visits/{id}.json", 1)
+        mockMvc.perform(put("/api/visits/{id}.json", 1)
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
-        .andExpect(content().string("Updated"))
-        .andReturn();
+        .andExpect(content().string("Updated"));
         
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
-		
 		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
 		verify(clinicServiceMock, times(1)).findVisitById(4);
 		verify(clinicServiceMock, times(1)).saveVisit(argument.capture());
@@ -197,10 +235,13 @@ public class RestControllerVisitTest {
 		
 		Visit value = argument.getValue();
 		assertThat(value.getId(), is(4));
-		assertThat(value.getDate().getMillis(), is(1389654000000L));
+		assertThat(DateUtil.getDateTimeFormatter(DateUtil.PRINT_FORMAT).print(value.getDate()), is("2014/01/14"));
 		assertThat(value.getDescription(), is("bruten svans"));
 		assertThat(value.getPet().getId(), is(3));
 		assertThat(value.getPrice().doubleValue(), is(1150.00));
 		assertThat(value.isNew(), is(false));
-	}	
+	}
+	
+		
+	
 }

@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic;
+package org.springframework.samples.petclinic.util;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -26,18 +26,20 @@ public class TestUtil {
         return mapper.writeValueAsBytes(object);
     }
 
+    
+    public static DateTimeFormatter getDateTimeFormatter(String format) {
+		return DateTimeFormat.forPattern(format);
+	}
+
     /**
      * Gets a datetime object given a date as a string
      * 
      * @param dateTime a string on the format yyyy/MM/dd
      * @return a DateTime object
      */
-    
-	// Format yyyy/MM/dd
+    // Format yyyy/MM/dd
     public static DateTime getDateTime(String dateTime) throws ParseException {
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy/MM/dd");
-		DateTime dt = formatter.parseDateTime(dateTime);
-		return dt;
+		return getDateTimeFormatter("yyyy/MM/dd").parseDateTime(dateTime);
 	}
     
 }

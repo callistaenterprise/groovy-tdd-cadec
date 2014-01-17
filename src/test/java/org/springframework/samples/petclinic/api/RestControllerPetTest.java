@@ -28,7 +28,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.TestUtil;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.OwnerBuilder;
 import org.springframework.samples.petclinic.model.Pet;
@@ -36,6 +35,7 @@ import org.springframework.samples.petclinic.model.PetBuilder;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.PetTypeBuilder;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.samples.petclinic.util.TestUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -44,9 +44,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:testContext.xml", "classpath:spring/mvc-core-config.xml"})
 @WebAppConfiguration
+@ContextConfiguration(locations = {"classpath:testContext.xml", "classpath:spring/mvc-core-config.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
 public class RestControllerPetTest {
 
     private MockMvc mockMvc;
