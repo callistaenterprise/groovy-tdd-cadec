@@ -42,29 +42,16 @@ public class ClinicServiceImplTest {
 	}
 
 	@Test
-	public void testInteractions() {
-		VisitRepository visitMock = Mockito.mock(VisitRepository.class);
+	public void testSaveVisitSendsConfirmation() {
+		VisitRepository visitStub = Mockito.mock(VisitRepository.class);
 		ConfirmationService confirmationMock = Mockito.mock(ConfirmationService.class);
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, confirmationMock);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationMock);
 		service.saveVisit(visit);
-		Mockito.verify(visitMock).save(visit);
 		Mockito.verify(confirmationMock).sendConfirmationMessage(visit);
 	}
 
-	@Test
-	public void testPriceCalculation() throws Exception {
-		VisitRepository visitMock = Mockito.mock(VisitRepository.class);
-		ConfirmationService confirmationMock = Mockito.mock(ConfirmationService.class);
-		PriceCalculator calculatorMock = Mockito.mock(PriceCalculator.class);
-		Mockito.when(calculatorMock.calculate(now, pet)).thenReturn(new BigDecimal(100.0));
-		PowerMockito.whenNew(PriceCalculator.class).withNoArguments().thenReturn(calculatorMock);
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, confirmationMock);
-		service.saveVisit(visit);
-		Assert.assertEquals(new BigDecimal(100.0), visit.getPrice());
-	}
-
 	@Test(expected=DataAccessException.class)
-	public void testServiceThrowsDataAccessException() {
+	public void testSaveVisitThrowsDataAccessException() {
 		VisitRepository visitMock = Mockito.mock(VisitRepository.class);
 		Mockito.doThrow(new UncategorizedSQLException("", "", new SQLException("Oops"))).when(visitMock).save(visit);
 		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, null);
@@ -72,17 +59,27 @@ public class ClinicServiceImplTest {
 	}
 
 	@Test
-	public void testServiceLogsConfirmationError() throws Exception {
-		VisitRepository visitMock = Mockito.mock(VisitRepository.class);
-		ConfirmationService confirmationMock = Mockito.mock(ConfirmationService.class);
+	public void testSaveVisitLogsConfirmationError() throws Exception {
+		VisitRepository visitStub = Mockito.mock(VisitRepository.class);
+		ConfirmationService confirmationStub = Mockito.mock(ConfirmationService.class);
 		Throwable cause = new RuntimeException("Oops");
-		Mockito.doThrow(cause).when(confirmationMock).sendConfirmationMessage(visit);
+		Mockito.doThrow(cause).when(confirmationStub).sendConfirmationMessage(visit);
 		Logger loggerMock = Mockito.mock(Logger.class);
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, confirmationMock);
-		ReflectionUtils.setFinalStatic(ClinicServiceImpl.class.getDeclaredField("log"), loggerMock);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub);
+		ReflectionUtils.setStaticAttribute(ClinicServiceImpl.class, "log", loggerMock);
 		service.saveVisit(visit);
-		Mockito.verify(loggerMock).error(Mockito.anyString(), Mockito.eq(cause));
+		Mockito.verify(loggerMock).error(Mockito.anyString(), Mockito.any(Throwable.class));
 	}
 	
-	
+	@Test
+	public void testPriceCalculation() throws Exception {
+		VisitRepository visitStub = Mockito.mock(VisitRepository.class);
+		ConfirmationService confirmationStub = Mockito.mock(ConfirmationService.class);
+		PriceCalculator calculatorMock = Mockito.mock(PriceCalculator.class);
+		Mockito.when(calculatorMock.calculate(now, pet)).thenReturn(new BigDecimal(100.0));
+		PowerMockito.whenNew(PriceCalculator.class).withNoArguments().thenReturn(calculatorMock);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub);
+		service.saveVisit(visit);
+		Assert.assertEquals(new BigDecimal(100.0), visit.getPrice());
+	}
 }

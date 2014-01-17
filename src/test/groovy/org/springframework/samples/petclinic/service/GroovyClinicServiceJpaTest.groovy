@@ -39,55 +39,17 @@ class GroovyClinicServiceJpaTest {
     public void setupTestData() {
 		if (!testDataSetup) {
 			testDataSetup = true
-			Connection conn = dataSource.getConnection()
-			//conn.setAutoCommit(false)
-	    	Sql sql = new Sql(conn)
-			[['James', 'Carter'],
-			 ['Helen', 'Leary'],
-			 ['Linda', 'Douglas'],
-			 ['Rafael', 'Ortega'],
-			 ['Henry', 'Stevens'],
-			 ['Sharon', 'Jenkins']
-			].eachWithIndex { vet, idx ->
-				sql.executeInsert("INSERT INTO vets VALUES (${idx+1}, '${vet[0]}', '${vet[1]}')")
-	    	}
-			['radiology', 'surgery', 'dentistry'].eachWithIndex { spec, idx ->
-				sql.execute("INSERT INTO specialties VALUES (${idx+1}, '${spec}')")
+	    	Sql sql = new Sql(dataSource)
+			this.class.getResource('/db/hsqldb/populateDb.sql').eachLine {line ->
+				if (!line.empty) sql.execute(line)
 			}
-			sql.execute("INSERT INTO vet_specialties VALUES (2, 1)")
-			sql.execute("INSERT INTO vet_specialties VALUES (3, 2)")
-			sql.execute("INSERT INTO vet_specialties VALUES (3, 3)")
-			sql.execute("INSERT INTO vet_specialties VALUES (4, 2)")
-			sql.execute("INSERT INTO vet_specialties VALUES (5, 1)")
-			['cat', 'dog', 'lizard', 'snake', 'bird', 'hamster'].eachWithIndex { type, idx ->
-				sql.execute("INSERT INTO types VALUES (${idx+1}, '${type}')")
-			}
-			[['George', 'Franklin', '110 W. Liberty St.', 'Madison', '6085551023', 'george@gmail.com'],
-			 ['Betty', 'Davis', '638 Cardinal Ave.', 'Sun Prairie', '6085551749', 'betty@hotmail.com'],
-			 ['Eduardo', 'Rodriquez', '2693 Commerce St.', 'McFarland', '6085558763', 'ed@gmail.com'],
-			 ['Harold', 'Davis', '563 Friendly St.', 'Windsor', '6085553198', 'harold@yahoo.com'],
-			 ['Peter', 'McTavish', '2387 S. Fair Way', 'Madison', '6085552765', 'mctavish@gmail.com'],
-			 ['Jean', 'Coleman', '105 N. Lake St.', 'Monona', '6085552654', 'jean@gmail.com'],
-			 ['Jeff', 'Black', '1450 Oak Blvd.', 'Monona', '6085555387', 'jeff.black@hotmail.com'],
-			 ['Maria', 'Escobito', '345 Maple St.', 'Madison', '6085557683', 'me@hotmail.com'],
-			 ['David', 'Schroeder', '2749 Blackhawk Trail', 'Madison', '6085559435', 'david@hotmail.com'],
-			 ['Carlos', 'Estaban', '2335 Independence La.', 'Waunakee', '6085555487', 'carlos@hotmail.com']
-			].eachWithIndex { owner, idx ->
-				sql.execute("INSERT INTO owners VALUES (${idx+1}, '${owner[0]}', '${owner[1]}', '${owner[2]}', '${owner[3]}', '${owner[4]}', '${owner[5]}')")
-			}
-			LocalDate now = LocalDate.now()
-			Random rand = new Random()
-			['Leo', 'Basil', 'Rosy', 'Jewel', 'Iggy', 'George', 'Samantha', 'Max', 'Lucky', 'Mulligan', 'Freddy', 'Lucky', 'Sly'].eachWithIndex {
-				pet, idx, date = now.minusYears(idx), type = rand.nextInt(6)+1, owner = (idx % 10) + 1 ->
-					sql.execute("INSERT INTO pets VALUES (${idx+1}, '${pet}', '${date}', ${type}, ${owner})")
-			}
-			sql.execute("INSERT INTO visits VALUES (1, 7, '2013-01-01', 'rabies shot', 0.0)")
-			sql.execute("INSERT INTO visits VALUES (2, 8, '2013-01-02', 'rabies shot', 0.0)")
-			sql.execute("INSERT INTO visits VALUES (3, 8, '2013-01-03', 'neutered', 0.0)")
-			sql.execute("INSERT INTO visits VALUES (4, 7, '2013-01-04', 'spayed', 0.0)")
+			//['Foo', 'Bar'].eachWithIndex {
+			//	pet, idx, date = now.minusYears(idx), type = rand.nextInt(6)+1, owner = (idx % 10) + 1 ->
+			//		sql.execute("INSERT INTO pets VALUES (${idx+1}, '${pet}', '${date}', ${type}, ${owner})")
+			//}
 		}
-    }
-    
+	}
+
     @Test
     @Transactional
     public void findOwners() {
@@ -101,10 +63,10 @@ class GroovyClinicServiceJpaTest {
     public void findSingleOwner() {
         def owner1 = this.clinicService.findOwnerById(1)
         assert owner1.lastName.startsWith("Franklin")
-        def owner10 = this.clinicService.findOwnerById(10)
-        assert owner10.firstName == "Carlos"
+        def owner9 = this.clinicService.findOwnerById(9)
+        assert owner9.firstName == "David"
 
-        assert owner1.getPets().size() == 2
+        assert owner9.getPets().size() == 1
     }
 
     @Test

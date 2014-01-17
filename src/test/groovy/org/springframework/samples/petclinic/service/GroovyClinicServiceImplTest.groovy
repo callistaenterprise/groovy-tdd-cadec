@@ -1,17 +1,27 @@
 package org.springframework.samples.petclinic.service
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.sql.SQLException;
+
 import org.gmock.GMockController
 import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import org.slf4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.samples.petclinic.model.Pet
 import org.springframework.samples.petclinic.model.Visit
 import org.springframework.samples.petclinic.repository.VisitRepository
 import org.springframework.samples.petclinic.util.PriceCalculator
+import org.springframework.samples.petclinic.util.ReflectionUtils;
 
 
 class GroovyClinicServiceImplTest {
+
+	final shouldFail = new GroovyTestCase().&shouldFail
 
 	Visit visit;
 	Pet pet;
@@ -29,33 +39,33 @@ class GroovyClinicServiceImplTest {
 	}
 
 	@Test
-	public void stubInteractionsUsingExpandos() {
-		def visitMock = new Expando()
-		visitMock.save = {v -> assert v == visit}
+	public void testSaveVisitSendsConfirmationUsingExpandos() {
+		def visitStub = new Expando()
+		visitStub.save = {}
 		def confirmationMock = new Expando()
 		confirmationMock.sendConfirmationMessage = {v -> assert v == visit}
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock as VisitRepository, confirmationMock as ConfirmationService);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub as VisitRepository, confirmationMock as ConfirmationService);
 		service.saveVisit(visit);
 	}
 
 	@Test
-	public void stubInteractionsUsingMaps() {
-		def visitMock = [save:{v -> assert v == visit}] as VisitRepository
+	public void testSaveVisitSendsConfirmationUsingMaps() {
+		def visitStub = [save:{}] as VisitRepository
 		def confirmationMock = [sendConfirmationMessage:{v -> assert v == visit}] as ConfirmationService
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, confirmationMock);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationMock);
 		service.saveVisit(visit);
 	}
 
 	@Test
-	public void stubInteractionsUsingClosures() {
-		def visitMock = {v -> assert v == visit} as VisitRepository
+	public void testSaveVisitSendsConfirmationUsingClosures() {
+		def visitStub = {} as VisitRepository
 		def confirmationMock = {v -> assert v == visit} as ConfirmationService
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, confirmationMock);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationMock);
 		service.saveVisit(visit);
 	}
 
 	@Test
-	public void stubInteractionsUsingGMock() {
+	public void testSaveVisitSendsConfirmationUsingGMock() {
 		VisitRepository visitMock = gMock.mock(VisitRepository)
 		visitMock.save(visit)
 		ConfirmationService confirmationMock = gMock.mock(ConfirmationService)
@@ -67,15 +77,34 @@ class GroovyClinicServiceImplTest {
 	}
 	
 	@Test
+	public void testSaveVisitThrowsDataAccessException() {
+		def visitStub = {throw new  UncategorizedSQLException("", "", new SQLException("Oops"))} as VisitRepository
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, null)
+		shouldFail(DataAccessException) { service.saveVisit(visit) }
+	}
+
+	@Test
+	public void testSaveVisitLogsConfirmationError() throws Exception {
+		def visitStub = {} as VisitRepository
+		def confirmationStub = {throw new RuntimeException("Oops")} as ConfirmationService
+		def logMessage
+		Logger loggerMock = [error:{message, cause -> logMessage = message}] as Logger
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub);
+		ClinicServiceImpl.metaClass.setAttribute(service, "log", loggerMock)
+		service.saveVisit(visit);
+		assert logMessage == "Failed to send confirmation message"
+	}
+	
+	@Test
 	public void stubPriceCalculationUsingMockito() throws Exception {
-		def visitMock = Mockito.mock(VisitRepository);
-		def confirmationMock = Mockito.mock(ConfirmationService)
+		def visitStub = Mockito.mock(VisitRepository)
+		def confirmationStub = Mockito.mock(ConfirmationService)
 		PriceCalculator calculatorMock = Mockito.mock(PriceCalculator)
 		Mockito.when(calculatorMock.calculate(Mockito.any(DateTime), Mockito.any(Pet))).thenReturn(100.0)
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, confirmationMock);
+		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub)
 		service.calculator = calculatorMock
-		service.saveVisit(visit);
-		assert 100.0 == visit.getPrice()
+		service.saveVisit(visit)
+		assert 100.0 == visit.price
 	}
 
 

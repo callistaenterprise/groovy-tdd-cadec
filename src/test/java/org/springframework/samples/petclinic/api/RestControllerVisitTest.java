@@ -101,11 +101,6 @@ public class RestControllerVisitTest {
 
         byte[] json = TestUtil.convertObjectToJsonBytes(visit);
     
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Created";
-            }}).when(clinicServiceMock).saveVisit(visit);
-
         MvcResult result = mockMvc.perform(post("/api/visits.json")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(json)
@@ -173,11 +168,6 @@ public class RestControllerVisitTest {
 
 		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
 		
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Updated";
-            }}).when(clinicServiceMock).saveVisit(visit);
-
         MvcResult result = mockMvc.perform(put("/api/visits/{id}.json", 1)
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(json)

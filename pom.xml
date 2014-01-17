@@ -369,16 +369,30 @@
 			<scope>test</scope>
 		    <exclusions>
 		        <exclusion>
-		            <artifactId>hamcrest-core</artifactId>
 		            <groupId>org.hamcrest</groupId>
+		            <artifactId>hamcrest-core</artifactId>
 		        </exclusion>
 		    </exclusions>
+		</dependency>
+
+		<!-- Use Hamcrest matchers when writing assertions for the responses. Used by Spring MVC Test framework -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Use Mockito as mocking library -->
 		<dependency>
 		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-all</artifactId>
+		    <artifactId>mockito-core</artifactId>
 		    <version>${mockito.version}</version>
 		    <scope>test</scope>
 		</dependency>
@@ -387,6 +401,12 @@
 			<artifactId>mockito-groovy-support</artifactId>
 			<version>${mockito-groovy.version}</version>
 			<scope>test</scope>
+		    <exclusions>
+		        <exclusion>
+				    <groupId>org.mockito</groupId>
+				    <artifactId>mockito-all</artifactId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
 
 		<!-- Use JsonPath when writing assertions for JSON documents returned by the REST API -->
@@ -401,17 +421,27 @@
 			<artifactId>json-path-assert</artifactId>
 			<version>${jsonpath.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-library</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>		
 		
 		<!-- Used by Spring MVC Test framework -->
-		<!-- Use Hamcrest matchers when writing assertions for the responses. Used by Spring MVC Test framework -->
+
 		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>${hamcrest.version}</version>
+			<groupId>org.xmlmatchers</groupId>
+			<artifactId>xml-matchers</artifactId>
+			<version>1.0-RC1</version>
 			<scope>test</scope>
 		</dependency>
-		
+            		
 		<!-- XMLUnit -->
 		<dependency>
 			<groupId>xmlunit</groupId>
@@ -440,6 +470,12 @@
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
+		    <exclusions>
+		        <exclusion>
+				    <groupId>org.mockito</groupId>
+				    <artifactId>mockito-all</artifactId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
 		
 		<!-- Groovy -->
@@ -447,6 +483,7 @@
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>${groovy.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy.modules.http-builder</groupId>
@@ -470,6 +507,12 @@
 		</dependency>
 		
 		<!-- Fitnesse -->
+		<dependency>
+			<groupId>org.spockframework</groupId>
+			<artifactId>spock-spring</artifactId>
+			<version>0.7-groovy-2.0</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
@@ -815,6 +858,22 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>testdata</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<configuration>
+							<systemProperties>
+								<spring.profiles.active>testdata,default</spring.profiles.active>
+							</systemProperties>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>wiki</id>
 			<!-- This profile is for use when writing tests using the FitNesse wiki. 

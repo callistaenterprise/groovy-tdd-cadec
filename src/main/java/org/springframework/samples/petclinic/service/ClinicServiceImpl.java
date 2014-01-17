@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ClinicServiceImpl implements ClinicService {
 
-	private static final Logger log = LoggerFactory.getLogger(ClinicServiceImpl.class);
+	private static Logger log = LoggerFactory.getLogger(ClinicServiceImpl.class);
 
     private PriceCalculator calculator = new PriceCalculator();
 

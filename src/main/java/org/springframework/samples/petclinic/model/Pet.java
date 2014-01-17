@@ -42,10 +42,6 @@ import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 
@@ -114,6 +110,13 @@ public class Pet extends NamedEntity {
         List<Visit> sortedVisits = new ArrayList<Visit>(getVisitsInternal());
         PropertyComparator.sort(sortedVisits, new MutableSortDefinition("date", false, false));
         return Collections.unmodifiableList(sortedVisits);
+    }
+
+    public void setVisits(List<Visit> visits) {
+    	getVisitsInternal().clear();
+        for (Visit visit : visits) {
+        	addVisit(visit);
+        }
     }
 
     // ---- protected methods

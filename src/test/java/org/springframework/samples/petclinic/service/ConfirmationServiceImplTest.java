@@ -51,7 +51,7 @@ public class ConfirmationServiceImplTest {
 		service = new ConfirmationServiceImpl();
 		message =
 				"<visit><date>"+now+"</date><description>visit description</description>" +
-				"<pet type=\"type\"><owner>firstName lastName</owner><name>a pet</name></pet></visit>";
+				"<pet petType=\"type\"><owner>firstName lastName</owner><name>a pet</name></pet></visit>";
 	}
 
 	@Test

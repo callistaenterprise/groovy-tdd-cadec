@@ -1,3 +1,11 @@
+DELETE FROM visits;
+DELETE FROM pets;
+DELETE FROM owners;
+DELETE FROM types;
+DELETE FROM vet_specialties;
+DELETE FROM specialties;
+DELETE FROM vets;
+
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
 INSERT INTO vets VALUES (3, 'Linda', 'Douglas');

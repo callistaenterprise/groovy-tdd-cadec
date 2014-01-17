@@ -3,7 +3,7 @@ package org.springframework.samples.petclinic.web.spec
 import geb.spock.GebSpec
 import org.springframework.samples.petclinic.web.pages.*
 
-class NavigationTests extends GebSpec {
+class NavigationSpec extends GebSpec {
 
 	def "first page is HomePage"() {
 		when:

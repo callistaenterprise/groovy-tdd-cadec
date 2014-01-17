@@ -34,4 +34,12 @@
     <jdbc:initialize-database data-source="dataSource">
         <jdbc:script location="${jdbc.initLocation}"/>
     </jdbc:initialize-database>
+
+	<beans profile="testdata">
+	    <!-- Test-data initializer. If any of the script fails, the initialization stops. -->
+	    <jdbc:initialize-database data-source="dataSource">
+	        <jdbc:script location="${jdbc.dataLocation}"/>
+	    </jdbc:initialize-database>
+    </beans>
+
 </beans>
