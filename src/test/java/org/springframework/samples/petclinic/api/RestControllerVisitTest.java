@@ -52,12 +52,11 @@ public class RestControllerVisitTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
+    
     private MockMvc mockMvc;
     private DateTime birthDate;
 	private DateTime visitDate;
 
-    
     @Before
     public void setUp() {
         //We have to reset our mock between tests because the mock objects
@@ -68,10 +67,10 @@ public class RestControllerVisitTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         
         // Dates
-		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
-		birthDate = DateUtil.getDateTime("2009/05/19", formatter);
-		visitDate = DateUtil.getDateTime("2014/01/14", formatter);
-    }
+ 		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
+ 		birthDate = DateUtil.getDateTime("2009/05/19", formatter);
+ 		visitDate = DateUtil.getDateTime("2014/01/14", formatter);
+     }
     
 	@Test
 	public void createVisit_ContentAsJson_ShouldCreateNewVisitAndReturnString() throws Exception {
