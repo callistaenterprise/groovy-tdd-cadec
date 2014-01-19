@@ -1,13 +1,15 @@
 package org.springframework.samples.petclinic.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.hamcrest.MatcherAssert;
+import static org.hamcrest.MatcherAssert.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
@@ -17,7 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.xml.sax.SAXException;
 
 
-public class ConfirmationServiceImplTest {
+public class JavaConfirmationServiceImplTest {
 
 	private ConfirmationServiceImpl service;
 	private Owner owner;
@@ -47,24 +49,21 @@ public class ConfirmationServiceImplTest {
 		visit.setDate(now);
 		visit.setDescription("visit description");
 		visit.setPet(pet);
-		pet.addVisit(visit);
+		List<Visit> visits = new ArrayList<Visit>();
+		visits.add(visit);
+		pet.setVisits(visits);
 		service = new ConfirmationServiceImpl();
-		message =
-				"<visit><date>"+now+"</date><description>visit description</description>" +
-				"<pet petType=\"type\"><owner>firstName lastName</owner><name>a pet</name></pet></visit>";
-	}
-
-	@Test
-	public void testSerialization() throws SAXException, IOException {
-		MatcherAssert.assertThat(service.serialize(visit), XMLMatcher.isSimilarTo(message));
 	}
 
 	@Test
 	public void testConfirmationMessage() {
-		messageSender = Mockito.mock(MessageSender.class);
-		Mockito.when(messageSender.sendMessage(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(true);
+		message =
+				"<visit><date>"+now+"</date><description>visit description</description>" +
+				"<pet petType=\"type\"><owner>firstName lastName</owner><name>a pet</name></pet></visit>";
+		messageSender = mock(MessageSender.class);
+		when(messageSender.sendMessage(any(String.class), any(String.class))).thenReturn(true);
 		ReflectionTestUtils.setField(service, "messageSender", messageSender);
 		service.sendConfirmationMessage(visit);
-		Mockito.verify(messageSender).sendMessage(Matchers.eq("name@gmail.com"), Matchers.argThat(XMLMatcher.isSimilarTo(message)));
+		verify(messageSender).sendMessage(eq(owner.getEmail()), argThat(XMLMatcher.isSimilarTo(message)));
 	}
 }

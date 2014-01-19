@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -63,7 +64,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = {"classpath:spring/business-config.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 // No active profile specificied because JPA uses the "default" profile
-public class ClinicServiceJpaTest {
+public class JavaClinicServiceJpaTest {
 	
     @Autowired
     protected ClinicService clinicService;
@@ -205,7 +206,9 @@ public class ClinicServiceJpaTest {
 	    Pet pet7 = this.clinicService.findPetById(7);
 	    int found = pet7.getVisits().size();
 	    Visit visit = new Visit();
-	    pet7.addVisit(visit);
+	    List<Visit> visits = pet7.getVisits();
+	    visits.add(visit);
+	    pet7.setVisits(visits);
 	    visit.setDescription("test");
 	    // both storeVisit and storePet are necessary to cover all ORM tools
 	    this.clinicService.saveVisit(visit);

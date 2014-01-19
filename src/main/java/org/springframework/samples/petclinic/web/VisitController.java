@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.web;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -60,7 +61,9 @@ public class VisitController {
     public String initNewVisitForm(@PathVariable("petId") int petId, Map<String, Object> model) {
         Pet pet = this.clinicService.findPetById(petId);
         Visit visit = new Visit();
-        pet.addVisit(visit);
+        List<Visit> visits = pet.getVisits();
+        visits.add(visit);
+        pet.setVisits(visits);
         model.put("visit", visit);
         return "pets/createOrUpdateVisitForm";
     }

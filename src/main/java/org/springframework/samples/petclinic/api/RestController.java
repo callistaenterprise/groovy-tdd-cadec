@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -174,9 +176,11 @@ public class RestController {
 				oldPet.setType(newPet.getType());
 			}
 			if (newPet.getVisits() != null) {
+				List<Visit> oldVisits = oldPet.getVisits(); 
 				for (Visit visit : newPet.getVisits()) {
-					oldPet.addVisit(visit);
+					oldVisits.add(visit);
 				}
+				oldPet.setVisits(oldVisits);
 			}
 			
 			// Update owner

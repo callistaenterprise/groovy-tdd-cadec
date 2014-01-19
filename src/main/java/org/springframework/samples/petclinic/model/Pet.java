@@ -109,7 +109,8 @@ public class Pet extends NamedEntity {
     public List<Visit> getVisits() {
         List<Visit> sortedVisits = new ArrayList<Visit>(getVisitsInternal());
         PropertyComparator.sort(sortedVisits, new MutableSortDefinition("date", false, false));
-        return Collections.unmodifiableList(sortedVisits);
+        //return Collections.unmodifiableList(sortedVisits);
+        return sortedVisits;
     }
 
     public void setVisits(List<Visit> visits) {
@@ -121,7 +122,7 @@ public class Pet extends NamedEntity {
 
     // ---- protected methods
 
-    public void addVisit(Visit visit) {
+    protected void addVisit(Visit visit) {
         getVisitsInternal().add(visit);
         visit.setPet(this);
     }
