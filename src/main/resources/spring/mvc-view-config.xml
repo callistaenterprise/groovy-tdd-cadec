@@ -27,11 +27,6 @@
 			        <property name="suffix" value=".jsp"/>
 			    </bean>
 			    
-				<!-- ATOM view -->
-<!--     			<bean class="org.springframework.web.servlet.view.XmlViewResolver"> -->
-<!--         			<property name="location" value="/spring/atom-view-config.xml"/> -->
-<!--     			</bean>			     -->
-
 				<!-- JSON view -->
 			    <bean class="org.springframework.samples.petclinic.view.JsonViewResolver"/>    	
 
@@ -57,13 +52,9 @@
                 <entry key="html" value="text/html" />
                 <entry key="xml"  value="application/xml" />
                 <entry key="json"  value="application/json" />
-                <!--  <entry key="atom" value="application/atom+xml" /> -->
             </map>
         </property>
     </bean>
-
-    <!-- Renders an Atom feed of the visits. Used by the BeanNameViewResolver  -->
-    <!-- <bean id="vets/vetList.atom" class="org.springframework.samples.petclinic.view.VetsAtomView"/> -->
 
     <!-- Renders an JSON View. Used by the BeanNameViewResolver  -->
 	<!-- <bean id="vets/vetList.json" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/> -->    	

@@ -33,9 +33,6 @@
             <td>
                 <a href="<spring:url value="/api/vets.xml" htmlEscape="true" />">View as XML</a>
             </td>
-            <td>
-                <a href="<spring:url value="/vets.atom" htmlEscape="true" />">Subscribe to Atom feed</a>
-            </td>
         </tr>
     </table>
 
