@@ -66,7 +66,7 @@
 		<jackson.version>2.3.0</jackson.version>
 
 		<!-- XStream -->
-		<xstream.version>1.2.2</xstream.version>
+		<xstream.version>1.4.6</xstream.version>
 
 		<!-- 
 			Test properties
@@ -291,7 +291,7 @@
 		
 		<!-- XStream is a simple library to serialize objects to XML and back again -->
 		<dependency>
-			<groupId>xstream</groupId>
+			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>${xstream.version}</version>
 		</dependency>

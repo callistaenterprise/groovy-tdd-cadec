@@ -14,15 +14,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
-import org.mockito.invocation.InvocationOnMock
-import org.mockito.stubbing.Answer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.samples.petclinic.TestUtil
 import org.springframework.samples.petclinic.model.Owner
 import org.springframework.samples.petclinic.model.OwnerBuilder
 import org.springframework.samples.petclinic.model.Pet
@@ -32,11 +30,13 @@ import org.springframework.samples.petclinic.model.PetTypeBuilder
 import org.springframework.samples.petclinic.model.Visit
 import org.springframework.samples.petclinic.model.VisitBuilder
 import org.springframework.samples.petclinic.service.ClinicService
+import org.springframework.samples.petclinic.util.DateUtil
+import org.springframework.samples.petclinic.util.JSONUtil
+import org.springframework.samples.petclinic.util.MediaTypeUtil
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
@@ -65,8 +65,9 @@ public class GroovyRestControllerVisitTest {
     
 	@Test
 	public void create_NewVisit_ShouldCreateVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
+		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
+		DateTime birthDate = DateUtil.getDateTime("2009/05/19", formatter);
+		DateTime visitDate = DateUtil.getDateTime("2014/01/14", formatter);
 
 		def builder = new ObjectGraphBuilder()
 		builder.identifierResolver = "ref_id"
@@ -83,10 +84,10 @@ public class GroovyRestControllerVisitTest {
 						   {owner(id: 1, address: "Kungsgatan 1", city: "Göteborg", firstName: "Hannes",
 								  lastName: "Johansson", telephone: "031-111213", email: "foo@bar.com")})})		
 
-        byte[] json = TestUtil.convertObjectToJsonBytes(visit);
+        byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
     
         mockMvc.perform(post("/api/visits.json")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.contentType(MediaTypeUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isCreated())
@@ -107,8 +108,9 @@ public class GroovyRestControllerVisitTest {
 
 	@Test
 	public void update_VisitFound_ShouldUpdateVisitAndReturnString() throws Exception {
-		DateTime birthDate = TestUtil.getDateTime("2009/05/19");
-		DateTime visitDate = TestUtil.getDateTime("2014/01/14");
+		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
+		DateTime birthDate = DateUtil.getDateTime("2009/05/19", formatter);
+		DateTime visitDate = DateUtil.getDateTime("2014/01/14", formatter);
         
 		Owner owner = new OwnerBuilder()
     	.id(1)
@@ -141,26 +143,18 @@ public class GroovyRestControllerVisitTest {
     	.build();        
 
         // create json
-		byte[] json = TestUtil.convertObjectToJsonBytes(visit);
+		byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
 
 		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
 		
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                return "Updated";
-            }}).when(clinicServiceMock).saveVisit(visit);
-
-        MvcResult result = mockMvc.perform(put("/api/visits/{id}.json", 1)
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+        mockMvc.perform(put("/api/visits/{id}.json", 1)
+				.contentType(MediaTypeUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
         .andExpect(content().string("Updated"))
         .andReturn();
-        
-//		String content = result.getResponse().getContentAsString();
-//		System.err.println(content);
 		
 		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
 		verify(clinicServiceMock, times(1)).findVisitById(4);
