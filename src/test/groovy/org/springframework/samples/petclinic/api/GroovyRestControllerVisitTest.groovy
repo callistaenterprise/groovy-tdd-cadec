@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.api;
+package org.springframework.samples.petclinic.api
 
 import static org.hamcrest.Matchers.is
 import static org.junit.Assert.assertNull
@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatter
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,60 +45,66 @@ import org.springframework.web.context.WebApplicationContext
 @WebAppConfiguration
 public class GroovyRestControllerVisitTest {
 
-    private MockMvc mockMvc;
+    @Autowired
+    def ClinicService clinicServiceMock
 
     @Autowired
-    private ClinicService clinicServiceMock;
+    def WebApplicationContext webApplicationContext
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
+    def mockMvc
+	def builder 
+	def birthDate
+	def visitDate
+	
     @Before
     public void setUp() {
         //We have to reset our mock between tests because the mock objects
         //are managed by the Spring container. If we would not reset them,
         //stubbing and verified behavior would "leak" from one test to another.
-        Mockito.reset(clinicServiceMock);
+        Mockito.reset(clinicServiceMock)
 
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		// Main entry point for server-side Spring MVC test support.
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build()
+		
+		// Create builder
+		builder = new ObjectGraphBuilder()
+		builder.identifierResolver = "ref_id"
+		builder.classNameResolver = "org.springframework.samples.petclinic.model"
+		builder.metaClass.toJson = { def visit -> JSONUtil.convertObjectToJsonBytes(visit) }
+
+		// Dates used in test data
+		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT)
+		birthDate = DateUtil.getDateTime("2009/05/19", formatter)
+		visitDate = DateUtil.getDateTime("2014/01/14", formatter)
     }
     
 	@Test
 	public void create_NewVisit_ShouldCreateVisitAndReturnString() throws Exception {
-		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
-		DateTime birthDate = DateUtil.getDateTime("2009/05/19", formatter);
-		DateTime visitDate = DateUtil.getDateTime("2014/01/14", formatter);
 
-		def builder = new ObjectGraphBuilder()
-		builder.identifierResolver = "ref_id"
-		builder.classNameResolver = "org.springframework.samples.petclinic.model"
+		// Create test data
+		def visit = builder.visit(date: visitDate, description: "bruten svans", price: 750.00,
+					  			{pet(id: 3, birthDate: birthDate, name: "Spöket",
+									  {petType(id: 2, name: "Katt")},
+									  {owner(id: 1, address: "Kungsgatan 1", city: "Göteborg", firstName: "Hannes",
+										     lastName: "Johansson", telephone: "031-111213", email: "foo@bar.com")})})		
 
-		Visit visit =
-		builder.visit(date: visitDate,
-					  description: "bruten svans",
-					  price: 750.00,
-					  {pet(id: 3,
-						   birthDate: birthDate,
-						   name: "Spöket",
-						   {petType(id:2, name: "Katt")},
-						   {owner(id: 1, address: "Kungsgatan 1", city: "Göteborg", firstName: "Hannes",
-								  lastName: "Johansson", telephone: "031-111213", email: "foo@bar.com")})})		
-
-        byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
-    
+        // Create request body
+		def json = builder.toJson(visit)
+		
+		// Call rest-api    
         mockMvc.perform(post("/api/visits.json")
 				.contentType(MediaTypeUtil.APPLICATION_JSON_UTF8)
 				.content(json)
 				)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
-        .andExpect(content().string("Created"));
+        .andExpect(content().string("Created"))
 
-		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
-		verify(clinicServiceMock, times(1)).saveVisit(argument.capture());
-		verifyNoMoreInteractions(clinicServiceMock);
+		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class)
+		verify(clinicServiceMock, times(1)).saveVisit(argument.capture())
+		verifyNoMoreInteractions(clinicServiceMock)
 		
-		Visit value = argument.getValue();
+		Visit value = argument.getValue()
 		assert value.id == null
 		assert value.date == visit.date
 		assert value.description == visit.description
@@ -108,44 +114,23 @@ public class GroovyRestControllerVisitTest {
 
 	@Test
 	public void update_VisitFound_ShouldUpdateVisitAndReturnString() throws Exception {
-		DateTimeFormatter formatter = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT);
-		DateTime birthDate = DateUtil.getDateTime("2009/05/19", formatter);
-		DateTime visitDate = DateUtil.getDateTime("2014/01/14", formatter);
-        
-		Owner owner = new OwnerBuilder()
-    	.id(1)
-    	.address("Kungsgatan 1")
-    	.city("Göteborg")
-    	.firstName("Hannes")
-    	.lastName("Johansson")
-    	.telephone("031-111213")
-    	.build();
+		        
+		// Create test data
+		def visit = builder.visit(id: 4,
+					  date: visitDate,
+					  description: "bruten svans",
+					  price: 1150.00,
+					  {pet(id: 3,
+						   birthDate: birthDate,
+						   name: "Spöket",
+						   {petType(id: 2, name: "Katt")},
+						   {owner(id: 1, address: "Kungsgatan 1", city: "Göteborg", firstName: "Hannes",
+								  lastName: "Johansson", telephone: "031-111213", email: "foo@bar.com")})})
 		
-        PetType petType = new PetTypeBuilder()
-    	.id(2)
-    	.name("Katt")
-    	.build();
-        
-        Pet pet = new PetBuilder()
-        .id(3)
-    	.birthDate(birthDate)
-    	.name("Spöket")
-    	.owner(owner)
-    	.petType(petType)
-    	.build();
-        
-        Visit visit = new VisitBuilder()
-        .id(4)
-        .date(visitDate)
-        .description("bruten svans")
-        .pet(pet)
-        .price(new BigDecimal(1150.00))
-    	.build();        
+        // Create request body
+		def json = builder.toJson(visit)
 
-        // create json
-		byte[] json = JSONUtil.convertObjectToJsonBytes(visit);
-
-		when(clinicServiceMock.findVisitById(4)).thenReturn(visit);
+		when(clinicServiceMock.findVisitById(4)).thenReturn(visit)
 		
         mockMvc.perform(put("/api/visits/{id}.json", 1)
 				.contentType(MediaTypeUtil.APPLICATION_JSON_UTF8)
@@ -154,19 +139,19 @@ public class GroovyRestControllerVisitTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
         .andExpect(content().string("Updated"))
-        .andReturn();
+        .andReturn()
 		
-		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class);
-		verify(clinicServiceMock, times(1)).findVisitById(4);
-		verify(clinicServiceMock, times(1)).saveVisit(argument.capture());
-		verifyNoMoreInteractions(clinicServiceMock);
+		ArgumentCaptor<Visit> argument = ArgumentCaptor.forClass(Visit.class)
+		verify(clinicServiceMock, times(1)).findVisitById(4)
+		verify(clinicServiceMock, times(1)).saveVisit(argument.capture())
+		verifyNoMoreInteractions(clinicServiceMock)
 		
-		Visit value = argument.getValue();
-		assertThat(value.getId(), is(4));
-		assertThat(value.getDate().getMillis(), is(1389654000000L));
-		assertThat(value.getDescription(), is("bruten svans"));
-		assertThat(value.getPet().getId(), is(3));
-		assertThat(value.getPrice().doubleValue(), is(1150.00.doubleValue()));
-		assertThat(value.isNew(), is(false));
+		Visit value = argument.getValue()
+		assert value.id == 4
+		assert value.date == visit.date
+		assert value.description == visit.description
+		assert value.price == 1150.00
+		assert value.pet.id == 3
+		assert !value.new
 	}	
 }
