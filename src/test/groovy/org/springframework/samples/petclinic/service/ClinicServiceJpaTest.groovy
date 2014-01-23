@@ -76,10 +76,6 @@ class ClinicServiceJpaTest {
         assert owner.getId().longValue() != 0, "Owner Id should have been generated"
         owners = this.clinicService.findOwnerByLastName("Schultz")
         assert owners.size() == found+1, "Verifying number of owners after inserting a new one."
-		new Sql(dataSource.connection).eachRow("SELECT count(*) FROM owners WHERE last_name = ${owner.lastName}") {
-			assert it[0] == 1, "Verifying number of owners after inserting a new one."
-		}
-
     }
 
     @Test

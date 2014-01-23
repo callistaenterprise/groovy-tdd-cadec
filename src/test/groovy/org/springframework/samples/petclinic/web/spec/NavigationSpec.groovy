@@ -13,7 +13,7 @@ class NavigationSpec extends GebSpec {
 		at HomePage
 	}
 
-	def "navigate to Find Owners page"() {
+	def "from Home page you can navigate to Find Owners page"() {
 		given:
 		to HomePage
 		

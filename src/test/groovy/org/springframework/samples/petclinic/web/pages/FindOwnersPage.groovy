@@ -8,4 +8,13 @@ class FindOwnersPage extends PetClinicPage {
 
 	static at = { $("h2").text() == "Find Owners" }
 
+	static content = {
+		lastName { $("input", name: "lastName") }
+		search { $("submit") }
+	}
+	
+	def findByLastName(name) {
+		lastName.value(name)
+		search.click()
+	}
 }

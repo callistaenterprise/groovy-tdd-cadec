@@ -18,9 +18,10 @@ class PriceCalculatorTest {
 		birthDate = new DateTime(2005, 3, 31, 0, 0, 0, 0)
 		pet = new Pet(birthDate: birthDate)
 		visits = []
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(5))
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(10))
-		pet.visits = visits
+		10.times {
+			visits << new Visit(pet:pet, date: birthDate.plusWeeks(it * 5))
+		}
+		pet.visits = visits[0..1]
 	}
 
 	@Test
@@ -30,8 +31,7 @@ class PriceCalculatorTest {
 
 	@Test
 	void testGetBasePriceForThreeYearOldPetThirdVisit() {
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(15))
-		pet.visits = visits
+		pet.visits = visits[0..2]
 		assert calculator.calculate(birthDate.plusYears(3), pet) == 320.00
 	}
 
@@ -42,7 +42,12 @@ class PriceCalculatorTest {
 	
 	@Test
 	void testGetBasePriceForFourYearOldPetThirdVisit() {
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(15))
+		pet.visits = visits[0..2]
+		assert calculator.calculate(birthDate.plusYears(4), pet) == 384.00
+	}
+
+	@Test
+	void testGetBasePriceForFourYearOldPet10Visit() {
 		pet.visits = visits
 		assert calculator.calculate(birthDate.plusYears(4), pet) == 384.00
 	}

@@ -1,22 +1,13 @@
 package org.springframework.samples.petclinic.util;
 
-import java.sql.Date;
-
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Visit;
 
-import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class XMLUtil {
 
@@ -31,8 +22,6 @@ public class XMLUtil {
 		xstream.omitField(Pet.class, "visits");
 		xstream.useAttributeFor(Pet.class, "petType");
 		xstream.registerConverter(new DateTimeConverter());
-		//xstream.registerConverter(new PetTypeConverter());
-		//xstream.registerConverter(new OwnerConverter());
 	}
 	
 	public static String serialize(Object object) {
@@ -42,7 +31,6 @@ public class XMLUtil {
 		return xstream.toXML(object);
 	}
 	
-	@SuppressWarnings("unchecked")   
 	public static Object deserialize(String xml, Object root) {
 	   return xstream.fromXML(xml, root);
 	}
@@ -56,7 +44,7 @@ public class XMLUtil {
         	DateTime dt = DateUtil.getDateTimeFormatter(DateUtil.PARSE_FORMAT).parseDateTime(date);
             return dt;
         }
-        public boolean canConvert(Class type) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
         	return type.equals(DateTime.class);
         }
 	}
@@ -68,7 +56,7 @@ public class XMLUtil {
         public Object fromString(String name) {
         	return null;
         }
-        public boolean canConvert(Class type) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
             return type.equals(PetType.class);
         }
 	}
@@ -81,7 +69,7 @@ public class XMLUtil {
         public Object fromString(String name) {
         	return null;
         }
-        public boolean canConvert(Class type) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
             return type.equals(Owner.class);
         }
 	}
@@ -93,7 +81,6 @@ public class XMLUtil {
 			o instanceof Visit) {
 			return true;
 		}
-		
 		return false;
 	}	
 }
