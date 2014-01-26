@@ -34,16 +34,19 @@ public class JavaClinicServiceImplTest {
 	public void testSaveVisitSendsConfirmation() {
 		VisitRepository visitStub = mock(VisitRepository.class);
 		ConfirmationService confirmationMock = mock(ConfirmationService.class);
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationMock);
+		ClinicServiceImpl service = new ClinicServiceImpl();
+		service.setVisitRepository(visitStub);
+		service.setConfirmationService(confirmationMock);
 		service.saveVisit(visit);
 		verify(confirmationMock).sendConfirmationMessage(visit);
 	}
 
 	@Test(expected=DataAccessException.class)
 	public void testSaveVisitThrowsDataAccessException() {
-		VisitRepository visitMock = mock(VisitRepository.class);
-		doThrow(new DataIntegrityViolationException("Oops")).when(visitMock).save(visit);
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitMock, null);
+		VisitRepository visitStub = mock(VisitRepository.class);
+		doThrow(new DataIntegrityViolationException("Oops")).when(visitStub).save(visit);
+		ClinicServiceImpl service = new ClinicServiceImpl();
+		service.setVisitRepository(visitStub);
 		service.saveVisit(visit);
 	}
 
@@ -54,7 +57,9 @@ public class JavaClinicServiceImplTest {
 		Throwable cause = new RuntimeException("Oops");
 		doThrow(cause).when(confirmationStub).sendConfirmationMessage(visit);
 		Logger loggerMock = mock(Logger.class);
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub);
+		ClinicServiceImpl service = new ClinicServiceImpl();
+		service.setVisitRepository(visitStub);
+		service.setConfirmationService(confirmationStub);
 		ReflectionUtils.setStaticAttribute(ClinicServiceImpl.class, "log", loggerMock);
 		service.saveVisit(visit);
 		verify(loggerMock).error(anyString(), any(Throwable.class));

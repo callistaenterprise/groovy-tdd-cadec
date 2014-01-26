@@ -13,6 +13,17 @@ class NavigationSpec extends GebSpec {
 		at HomePage
 	}
 
+	def "from Home page you can navigate to Vets page"() {
+		given:
+		to HomePage
+		
+		when:
+		navigateToVetsPage()
+ 
+		then:
+		at VetsPage
+	}
+
 	def "from Home page you can navigate to Find Owners page"() {
 		given:
 		to HomePage
@@ -24,18 +35,7 @@ class NavigationSpec extends GebSpec {
 		at FindOwnersPage
 	}
 
-	def "navigate to Vets page"() {
-		given:
-		to HomePage
-		
-		when:
-		navigateToVetsPage()
- 
-		then:
-		at VetsPage
-	}
-
-	def "navigate back to Home page"() {
+	def "from FindOwners page you can navigate back to Home page"() {
 		given:
 		to FindOwnersPage
 		
@@ -44,6 +44,12 @@ class NavigationSpec extends GebSpec {
  
 		then:
 		at HomePage
+	}
+	
+	def "from Home page you can navigate to Error page"() {
+	}
+
+	def "from Error page you can navigate back to Home page"() {
 	}
 
 }

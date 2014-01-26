@@ -1,0 +1,10 @@
+<project name="copy-solution" default="copy-solution" basedir=".">
+  <property name="from" value="${basedir}/solutionExamples/exercise${exercise}/src"/>
+  <property name="to" value="${basedir}/src"/>
+  <target name="copy-solution">
+  	<echo message="Copying solution for exercise ${exercise} into project" />
+  	<copy toDir="${to}" overwrite="true">
+  		<fileset dir="${from}"/>
+  	</copy>
+  </target>
+</project>

@@ -10,7 +10,7 @@ class FindOwnersPage extends PetClinicPage {
 
 	static content = {
 		lastName { $("input", name: "lastName") }
-		search { $("submit") }
+		search { $("button", type: "submit") }
 	}
 	
 	def findByLastName(name) {

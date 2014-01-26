@@ -40,7 +40,7 @@ class ClinicServiceJpaTest {
 		if (!testDataSetup) {
 			testDataSetup = true
 	    	Sql sql = new Sql(dataSource)
-			this.class.getResource('/db/hsqldb/populateDb.sql').eachLine {line ->
+			this.class.getResource('/db/h2/populateDb.sql').eachLine {line ->
 				if (!line.empty) sql.execute(line)
 			}
 		}
@@ -157,16 +157,17 @@ class ClinicServiceJpaTest {
 	@Test
 	@Transactional
 	public void insertVisit() {
-	    Pet pet7 = this.clinicService.findPetById(7)
-	    int found = pet7.getVisits().size()
+		def sql = new Sql(dataSource)
+		sql.executeInsert("INSERT INTO pets VALUES (-1, 'Test Pet', '2012-06-08', 1, 1)")
+	    Pet pet = this.clinicService.findPetById(-1)
 	    Visit visit = new Visit(description: "test")
-	    pet7.addVisit(visit)
+	    pet.addVisit(visit)
 	    // both storeVisit and storePet are necessary to cover all ORM tools
 	    this.clinicService.saveVisit(visit)
-	    this.clinicService.savePet(pet7)
-	    pet7 = this.clinicService.findPetById(7)
-	    assert pet7.getVisits().size() == found + 1
-	    assert visit.id != null, "Visit Id should have been generated"
+	    this.clinicService.savePet(pet)
+		def rows = sql.rows("SELECT id FROM visits WHERE pet_id = -1")
+		assert rows.size() == 1
+		assert rows[0].id != null, "Visit Id should have been generated"
 	}
 
 }

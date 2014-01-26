@@ -56,14 +56,33 @@ public class ClinicServiceImpl implements ClinicService {
     private VisitRepository visitRepository;
     private ConfirmationService confirmationService;
 
-    @Autowired
-    public ClinicServiceImpl(PetRepository petRepository, VetRepository vetRepository, OwnerRepository ownerRepository, VisitRepository visitRepository, ConfirmationService confirmationService) {
-        this.petRepository = petRepository;
-        this.vetRepository = vetRepository;
-        this.ownerRepository = ownerRepository;
-        this.visitRepository = visitRepository;
-        this.confirmationService = confirmationService;
+    public ClinicServiceImpl() {
     }
+
+    @Autowired
+	public void setPetRepository(PetRepository petRepository) {
+		this.petRepository = petRepository;
+	}
+
+    @Autowired
+	public void setVetRepository(VetRepository vetRepository) {
+		this.vetRepository = vetRepository;
+	}
+
+    @Autowired
+	public void setOwnerRepository(OwnerRepository ownerRepository) {
+		this.ownerRepository = ownerRepository;
+	}
+
+    @Autowired
+	public void setVisitRepository(VisitRepository visitRepository) {
+		this.visitRepository = visitRepository;
+	}
+
+    @Autowired
+	public void setConfirmationService(ConfirmationService confirmationService) {
+		this.confirmationService = confirmationService;
+	}
 
     // ------ public methods -------
     
@@ -140,7 +159,7 @@ public class ClinicServiceImpl implements ClinicService {
         try {
 			confirmationService.sendConfirmationMessage(visit);
 		} catch (Throwable t) {
-			log.error("Failed to send confirmation message", t);
+			log.error("Failed to send confirmation message: " + t.getMessage());
 		}
     }
 

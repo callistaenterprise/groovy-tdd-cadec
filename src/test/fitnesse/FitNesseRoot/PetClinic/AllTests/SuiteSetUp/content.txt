@@ -1,4 +1,0 @@
-!include -c .PetClinic.SuiteSetUp
-
-|script|Browser|
-|initialize|

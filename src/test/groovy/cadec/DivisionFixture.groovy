@@ -1,0 +1,5 @@
+package cadec
+
+class DivisionFixture {
+
+}

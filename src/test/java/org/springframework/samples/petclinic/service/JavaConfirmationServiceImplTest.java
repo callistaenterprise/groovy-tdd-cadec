@@ -1,22 +1,24 @@
 package org.springframework.samples.petclinic.service;
 
-import java.io.IOException;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.util.XMLMatcher;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.xml.sax.SAXException;
 
 
 public class JavaConfirmationServiceImplTest {

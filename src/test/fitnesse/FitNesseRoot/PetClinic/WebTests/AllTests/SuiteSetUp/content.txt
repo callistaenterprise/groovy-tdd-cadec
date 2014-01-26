@@ -1,0 +1,8 @@
+!include -c .PetClinic.SuiteSetUp
+
+|Config|
+|property|value|
+|geb.env|${geb.env}|
+
+|script|Browser|
+|initialize|

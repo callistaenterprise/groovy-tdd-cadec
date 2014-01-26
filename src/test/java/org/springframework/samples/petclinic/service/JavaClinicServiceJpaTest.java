@@ -78,7 +78,7 @@ public class JavaClinicServiceJpaTest {
 		if (!testDataSetup) {
 			testDataSetup = true;
 	    	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-	    	Resource script = new ClassPathResource("/db/hsqldb/populateDb.sql");
+	    	Resource script = new ClassPathResource("/db/h2/populateDb.sql");
 	    	JdbcTestUtils.executeSqlScript(jdbcTemplate, script, true);
 		}
     }

@@ -1,0 +1,22 @@
+!3 Set up test data
+
+!|InsertOwners|
+|id|firstName|lastName|email|
+|-1|Björn|Beskow|bjorn.beskow@callistaenterprise.se|
+|-2|Magnus|Ekstrand|magnus.ekstand@callistaenterprise.se|
+|-3|Peter|Merikan|peter.merikan@callistaenterprise.se|
+
+!3 Retrieve owners via REST api
+!|OwnerRestApiFixture|
+|id|firstName?|lastName?|email?|
+|-1|Björn|Beskow|bjorn.beskow@callistaenterprise.se|
+|-2|Magnus|Ekstrand|magnus.ekstand@callistaenterprise.se|
+|-3|Peter|Merikan|peter.merikan@callistaenterprise.se|
+
+!3 Clean up test data
+
+!|DeleteOwners|
+|id|
+|-1|
+|-2|
+|-3|

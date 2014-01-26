@@ -1,4 +1,0 @@
-groovy-tdd
-==========
-
-groovy-tdd

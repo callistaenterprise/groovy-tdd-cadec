@@ -22,15 +22,18 @@
     <!-- (in this case, JDBC-related settings for the dataSource definition below) -->
     <context:property-placeholder location="classpath:spring/data-access.properties" system-properties-mode="OVERRIDE"/>
 
-    <!-- DataSource configuration for the tomcat jdbc connection pool 
-    See here for more details on commons-dbcp versus tomcat-jdbc: 
-    http://blog.ippon.fr/2013/03/13/improving-the-performance-of-the-spring-petclinic-sample-application-part-3-of-5/-->
-    <bean id="tomcatDataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
-          p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"
-          p:username="${jdbc.username}" p:password="${jdbc.password}"/>
-
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
-    	 <constructor-arg ref="tomcatDataSource"/>
+    	 <constructor-arg ref="h2DataSource"/>
+	</bean>
+
+	<jdbc:embedded-database id="h2DataSource" type="H2"/>
+
+	<bean id="org.h2.tools.Server"
+	      class="org.h2.tools.Server"
+	      factory-method="createTcpServer"
+	      init-method="start"
+	      destroy-method="stop" lazy-init="false">
+	  <constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort, ${jdbc.embeddedPort}"/>
 	</bean>
 
     <!-- Database initializer. If any of the script fails, the initialization stops. -->

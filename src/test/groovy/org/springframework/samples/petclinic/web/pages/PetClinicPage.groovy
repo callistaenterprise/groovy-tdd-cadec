@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.web.pages
 
 import geb.Page
 
+
 class PetClinicPage extends Page {
 
 	static content = {
@@ -10,7 +11,7 @@ class PetClinicPage extends Page {
 		homeLink(to: HomePage) { navigationLink(HomePage.url) }
 		findOwnersLink(to: FindOwnersPage) { navigationLink(FindOwnersPage.url) }
 		vetsLink(to: VetsPage) { navigationLink(VetsPage.url) }
-		errorLink { navigationLink("oups") }
+		errorLink { navigationLink(ErrorPage.url) }
 		footer { $("table.footer") }
 	}
 
@@ -24,5 +25,9 @@ class PetClinicPage extends Page {
 
 	def navigateToVetsPage() {
 		vetsLink.click()
+	}
+
+	def navigateToErrorPage() {
+		errorLink.click()
 	}
 }

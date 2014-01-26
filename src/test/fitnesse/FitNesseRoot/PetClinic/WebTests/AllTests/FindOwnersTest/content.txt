@@ -1,0 +1,24 @@
+!3 Set up test data
+
+!|InsertOwners|
+|id|firstName|lastName|address|email|
+|-1|Magnus|Larsson|Fabriksgatan 13|ml@callistaenterprise.se|
+|-2|Peter|Larsson|Fabriksgatan 13|peter.larsson@callistaenterprise.se|
+|-3|Örjan|Lundberg|Drottninggatan 55|orjan.lundberg@callistaenterprise.se|
+
+!3 Find owners by last name
+!|script|FindOwners|
+|navigate to find owners page|
+|ensure|at find owners page|
+|find by last name|Larsson|
+|ensure|at owners page|
+|check|number of owners found|2|
+|check|name of owner|1|Magnus Larsson|
+
+!3 Clean up test data
+
+!|DeleteOwners|
+|id|
+|-1|
+|-2|
+|-3|

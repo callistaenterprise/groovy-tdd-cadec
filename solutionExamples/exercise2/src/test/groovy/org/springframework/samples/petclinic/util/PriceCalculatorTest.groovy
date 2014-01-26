@@ -1,7 +1,5 @@
 package org.springframework.samples.petclinic.util
 
-import static org.junit.Assert.assertEquals
-
 import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Test
@@ -10,43 +8,48 @@ import org.springframework.samples.petclinic.model.Visit
 
 class PriceCalculatorTest {
 
-	PriceCalculator calculator = new PriceCalculator()
-	DateTime birthDate
-	Pet pet
-	List<Visit> visits
+	def calculator = new PriceCalculator()
+	def birthDate
+	def pet
+	def visits
 
 	@Before
 	void fixture() {
 		birthDate = new DateTime(2005, 3, 31, 0, 0, 0, 0)
 		pet = new Pet(birthDate: birthDate)
 		visits = []
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(5))
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(10))
-		pet.visits = visits
+		10.times {
+			visits << new Visit(pet:pet, date: birthDate.plusWeeks(it * 5))
+		}
+		pet.visits = visits[0..1]
 	}
 
 	@Test
 	void testGetBasePriceForThreeYearOldPet() {
-		assertEquals(400.00, calculator.calculate(birthDate.plusYears(3), pet))
+		assert calculator.calculate(birthDate.plusYears(3), pet) == 400.00
 	}
 
 	@Test
 	void testGetBasePriceForThreeYearOldPetThirdVisit() {
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(15))
-		pet.visits = visits
-		assertEquals(320.00, calculator.calculate(birthDate.plusYears(3), pet))
+		pet.visits = visits[0..2]
+		assert calculator.calculate(birthDate.plusYears(3), pet) == 320.00
 	}
 
 	@Test
 	void testGetBasePriceForFourYearOldPet() {
-		assertEquals(480.00, calculator.calculate(birthDate.plusYears(4), pet))
+		assert calculator.calculate(birthDate.plusYears(4), pet) == 480.00
 	}
 	
 	@Test
 	void testGetBasePriceForFourYearOldPetThirdVisit() {
-		visits << new Visit(pet:pet, date: birthDate.plusWeeks(15))
+		pet.visits = visits[0..2]
+		assert calculator.calculate(birthDate.plusYears(4), pet) == 384.00
+	}
+
+	@Test
+	void testGetBasePriceForFourYearOldPet10Visit() {
 		pet.visits = visits
-		assertEquals(384.00, calculator.calculate(birthDate.plusYears(4), pet))
+		assert calculator.calculate(birthDate.plusYears(4), pet) == 384.00
 	}
 
 }
