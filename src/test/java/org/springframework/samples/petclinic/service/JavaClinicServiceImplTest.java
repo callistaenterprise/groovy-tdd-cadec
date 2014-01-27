@@ -62,7 +62,7 @@ public class JavaClinicServiceImplTest {
 		service.setConfirmationService(confirmationStub);
 		ReflectionUtils.setStaticAttribute(ClinicServiceImpl.class, "log", loggerMock);
 		service.saveVisit(visit);
-		verify(loggerMock).error(anyString(), any(Throwable.class));
+		verify(loggerMock).error(anyString());
 	}
 
 }

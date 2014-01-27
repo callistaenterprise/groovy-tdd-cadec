@@ -1,13 +1,14 @@
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.safari.SafariDriver
+import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.remote.DesiredCapabilities
-import org.openqa.selenium.remote.RemoteWebDriver
 
-driver = { new FirefoxDriver() } // use firefox by default
+//driver = { new FirefoxDriver() }
 //driver = { new ChromeDriver() }
-//driver = { new HtmlUnitDriver() }
+//driver = { new SafariDriver() }
+//driver = { new InternetExplorerDriver() }
+driver = { new HtmlUnitDriver() } // use HtmlUnit by default
 baseUrl = "http://localhost:9966/petclinic/"
 waiting {
     timeout = 5 // default wait is two seconds
@@ -21,6 +22,9 @@ environments {
     }
     firefox {
         driver = { new FirefoxDriver() }
+    }
+    ie {
+        driver = { new InternetExplorerDriver() }
     }
     headless {
         driver = { new HtmlUnitDriver() }
