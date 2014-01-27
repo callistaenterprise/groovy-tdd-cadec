@@ -31,7 +31,9 @@ class ClinicServiceImplTest {
 		def visitStub = {} as VisitRepository
 		def confirmedVisit
 		def confirmationMock = [sendConfirmationMessage:{v -> confirmedVisit = v}] as ConfirmationService
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationMock)
+		ClinicServiceImpl service = new ClinicServiceImpl()
+		service.visitRepository = visitStub
+		service.confirmationService = confirmationMock
 		service.saveVisit(visit)
 		assert confirmedVisit == visit
 	}
@@ -39,7 +41,8 @@ class ClinicServiceImplTest {
 	@Test
 	public void testSaveVisitThrowsDataAccessException() {
 		def visitStub = {throw new DataIntegrityViolationException("Oops")} as VisitRepository
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, null)
+		ClinicServiceImpl service = new ClinicServiceImpl()
+		service.visitRepository = visitStub
 		shouldFail(DataAccessException) { service.saveVisit(visit) }
 	}
 
@@ -49,7 +52,9 @@ class ClinicServiceImplTest {
 		def confirmationStub = {throw new RuntimeException("Oops")} as ConfirmationService
 		def logMessage
 		Logger loggerMock = [error:{message -> logMessage = message}] as Logger
-		ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub)
+		ClinicServiceImpl service = new ClinicServiceImpl()
+		service.visitRepository = visitStub
+		service.confirmationService = confirmationStub
 		ClinicServiceImpl.metaClass.setAttribute(service, "log", loggerMock)
 		service.saveVisit(visit)
 		assert logMessage == "Failed to send confirmation message: Oops"
