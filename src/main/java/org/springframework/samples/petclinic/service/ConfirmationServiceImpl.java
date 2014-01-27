@@ -49,7 +49,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         public Object fromString(String name) {
             return null;
         }
-        public boolean canConvert(Class type) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
             return type.equals(DateTime.class);
         }
 	}
@@ -60,7 +60,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         public Object fromString(String name) {
         	return null;
         }
-        public boolean canConvert(Class type) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
             return type.equals(PetType.class);
         }
 	}
@@ -72,7 +72,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         public Object fromString(String name) {
         	return null;
         }
-        public boolean canConvert(Class type) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
             return type.equals(Owner.class);
         }
 	}
