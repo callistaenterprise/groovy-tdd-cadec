@@ -57,22 +57,22 @@ public class JavaRestControllerVeterinarianTest {
     	.firstName("Laura")
     	.lastName("Pipping")
     	.specialties(Arrays.asList(
-    			new SpecialtyBuilder().id(1).name("fågel").build(),
-    			new SpecialtyBuilder().id(1).name("orm").build()))
+    			new SpecialtyBuilder().id(1).name("Birds").build(),
+    			new SpecialtyBuilder().id(1).name("Snakes").build()))
     	.build();
 
         Vet second = new VetBuilder()
     	.id(2)
     	.firstName("Annie")
     	.lastName("Jones")
-    	.specialties(Arrays.asList(new SpecialtyBuilder().id(1).name("hund och katt").build()))
+    	.specialties(Arrays.asList(new SpecialtyBuilder().id(1).name("Dogs and Cats").build()))
     	.build();
 
         Vet third = new VetBuilder()
     	.id(3)
     	.firstName("Elvira")
     	.lastName("Ekstrand")
-    	.specialties(Arrays.asList(new SpecialtyBuilder().id(1).name("häst").build()))
+    	.specialties(Arrays.asList(new SpecialtyBuilder().id(1).name("Horses").build()))
     	.build();
 
 		when(clinicServiceMock.findVets()).thenReturn(Arrays.asList(first, second, third));
