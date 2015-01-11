@@ -8,7 +8,6 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -99,6 +98,7 @@ public class XMLMatcher {
 		appendDifferences(diff, mismatchDescription);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void appendDifferences(DetailedDiff diff,
 			Description mismatchDescription) {
 		if (diff != null) {
