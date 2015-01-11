@@ -34,11 +34,10 @@ class ConfirmationServiceImplSpec extends Specification {
 		when:
 		service.sendConfirmationMessage(visit)
 		then:
-		1 * service.messageSender.sendMessage(_,_) >> {d, m ->
-			assert d == visit.pet.owner.email
-			message = new XmlSlurper().parseText(m)
-			true
-		}
+		1 * service.messageSender.sendMessage(
+			visit.pet.owner.email,
+			{m -> message = new XmlSlurper().parseText(m)}
+		)
 		message.description == visit.description
 		message.pet.name == visit.pet.name
 		message.pet.owner == "firstName lastName"
