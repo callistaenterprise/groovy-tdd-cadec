@@ -21,12 +21,12 @@ class ClinicServiceImplSpec extends Specification {
 		def loggerMock = Mock(Logger)
 		given:
 			confirmationStub.sendConfirmationMessage(visit) >> { throw new RuntimeException("Oops") }
-			ClinicServiceImpl service = new ClinicServiceImpl(null, null, null, visitStub, confirmationStub);
+			ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub, confirmationService: confirmationStub)
 			ClinicServiceImpl.metaClass.setAttribute(service, "log", loggerMock)
 		when:
 			service.saveVisit(visit)
 		then:
-			1 * loggerMock.error("Failed to send confirmation message", _)
+			1 * loggerMock.error({ msg -> msg.contains("Oops") })
 	}
 
 }
