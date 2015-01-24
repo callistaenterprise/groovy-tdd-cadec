@@ -17,9 +17,6 @@ environments {
     chrome {
         driver = { new ChromeDriver() }
     }
-    safari {
-        driver = { new SafariDriver() }
-    }
     firefox {
         driver = { new FirefoxDriver() }
     }

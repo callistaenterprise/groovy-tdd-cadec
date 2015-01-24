@@ -1,12 +1,13 @@
 package cadec
 
 import org.junit.Test
+import static org.junit.Assert.assertTrue
 
 class GettingStarted {
 
 	@Test
 	void testMethodInGroovy() {
-		assert false, "my first failing Groovy test"
+		assertTrue("my first failing Groovy test", false)
 	}
 
 }

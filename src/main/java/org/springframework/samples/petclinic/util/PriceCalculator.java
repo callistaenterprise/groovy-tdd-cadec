@@ -22,8 +22,8 @@ public class PriceCalculator {
     if (age.isGreaterThan(Years.THREE)) {
         price = price.multiply(new BigDecimal("1.20"));
     }
-    // Starting with 3rd visit, you get a 20% rebate
-    if (pet.getVisits().size() > 2) {
+    // Starting with 6rd visit, you get a 20% rebate
+    if (pet.getVisits().size() > 5) {
         price = price.multiply(new BigDecimal("0.80"));
     }
 

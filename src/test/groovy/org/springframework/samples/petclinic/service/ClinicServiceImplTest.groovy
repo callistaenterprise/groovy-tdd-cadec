@@ -30,32 +30,32 @@ class ClinicServiceImplTest {
 	public void testSaveVisitSendsConfirmation() {
 		def visitStub = {} as VisitRepository
 		def confirmedVisit
-		def confirmationMock = [sendConfirmationMessage:{v -> confirmedVisit = v}] as ConfirmationService
-		ClinicServiceImpl service = new ClinicServiceImpl()
-		service.visitRepository = visitStub
-		service.confirmationService = confirmationMock
+		def confirmationMock = {v -> confirmedVisit = v} as ConfirmationService
+		ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub,
+														  confirmationService: confirmationMock)
+
 		service.saveVisit(visit)
+
 		assert confirmedVisit == visit
 	}
 
 	@Test
 	public void testSaveVisitThrowsDataAccessException() {
 		def visitStub = {throw new DataIntegrityViolationException("Oops")} as VisitRepository
-		ClinicServiceImpl service = new ClinicServiceImpl()
-		service.visitRepository = visitStub
+		ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub)
 		shouldFail(DataAccessException) { service.saveVisit(visit) }
 	}
 
 	@Test
 	public void testSaveVisitLogsConfirmationError() throws Exception {
 		def visitStub = {} as VisitRepository
-		def confirmationStub // TODO: Create a stub which throws an exception when sendConfirmationMessage() is called
+		def confirmationStub // TODO: Create a stub that throws a RuntimeException when sendConfirmationMessage() is called
 
-		// TODO: Create a mock Logger which implements error(message) and saves the message in a variable
+		def logMessage
+		def loggerMock // TODO: Create a mock Logger that records an error() invocation as logMessage
 
-		ClinicServiceImpl service = new ClinicServiceImpl()
-		service.visitRepository = visitStub
-		service.confirmationService = confirmationStub
+				// TODO: Create a mock 
+		ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub, confirmationService: confirmationStub)
 
 		// TODO: Inject logger into service
 

@@ -34,12 +34,7 @@ class ConfirmationServiceImplSpec extends Specification {
 		when:
 		service.sendConfirmationMessage(visit)
 		then:
-		1 * service.messageSender.sendMessage(
-			visit.pet.owner.email,
-			{m -> message = new XmlSlurper().parseText(m)}
-		)
-		message.description == visit.description
-		message.pet.name == visit.pet.name
-		message.pet.owner == "firstName lastName"
+		1 * service.messageSender.sendMessage(visit.pet.owner.email, {m -> message = new XmlSlurper().parseText(m)} )
+		assert message.description == visit.description
 	}
 }

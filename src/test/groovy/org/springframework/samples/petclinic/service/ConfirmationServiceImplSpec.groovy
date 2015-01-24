@@ -29,18 +29,16 @@ class ConfirmationServiceImplSpec extends Specification {
 	
 	void "a confirmation message is sent to the correct destination, with an xml representation of the visit"() {
 		given:
-		// TODO: create a mock MessageSender and inject into service
 		def message
+		// TODO: create a mock MessageSender and assign it to service.messageSender
 		when:
-		// TODO: trigger the service to send a confirmation message
-		true
+		service.sendConfirmationMessage(visit)
 		then:
-		1 * service.messageSender.sendMessage(_,_) >> {d, m ->
-			// TODO: register an expectation on the mock messageSender to
-			// - verify the destination
-			// - retrieve the xml string, and store it to the message variable
-			//   as a navigationable object using XmlSlurper
-		}
-		// verify the content of the message, e.g. description, pet's name and owner
+		// TODO:
+		// Verify that sendMessage() is called once with correct parameters.
+		// The first parameter destination should be the pet's owners email, eg. visit.pet.owner.email
+		// The second parameter should be a string containing an xml message. Parse this string using
+		// XmlSlurper, and store it as message
+		assert message.description == visit.description
 	}
 }

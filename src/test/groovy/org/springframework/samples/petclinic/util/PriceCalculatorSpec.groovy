@@ -11,20 +11,21 @@ import spock.lang.Unroll
 class PriceCalculatorSpec extends Specification {
 
 	@Shared def calculator = new PriceCalculator()
-	@Shared def birthDate = new DateTime(2005, 3, 31, 0, 0, 0, 0)
+	@Shared def birthDate = new DateTime(2005, 3, 31, 0, 0)
 	def pet = new Pet(birthDate: birthDate)
 	def visits = []
 	
 	@Unroll
 	def "price for pet with age #age and #noOfVisits visits is #price"() {
 		given:
-		// TODO: create visits for pet
+		// TODO: set up visits, based on test data
 		pet.visits = visits
 
-		// expect:
-		// TODO: write and expection 
+		expect:
+		// TODO: provide expectation based on test data
 		
-		// where:
-		// TODO: provide test data in table format: age, noOfVisits and price
+		where:
+		age | noOfVisits | price
+		// TODO: provide test data
 	}
 }

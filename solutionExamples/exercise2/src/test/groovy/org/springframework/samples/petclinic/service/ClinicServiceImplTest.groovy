@@ -30,19 +30,19 @@ class ClinicServiceImplTest {
 	public void testSaveVisitSendsConfirmation() {
 		def visitStub = {} as VisitRepository
 		def confirmedVisit
-		def confirmationMock = [sendConfirmationMessage:{v -> confirmedVisit = v}] as ConfirmationService
-		ClinicServiceImpl service = new ClinicServiceImpl()
-		service.visitRepository = visitStub
-		service.confirmationService = confirmationMock
+		def confirmationMock = {v -> confirmedVisit = v} as ConfirmationService
+		ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub,
+														  confirmationService: confirmationMock)
+
 		service.saveVisit(visit)
+
 		assert confirmedVisit == visit
 	}
 
 	@Test
 	public void testSaveVisitThrowsDataAccessException() {
 		def visitStub = {throw new DataIntegrityViolationException("Oops")} as VisitRepository
-		ClinicServiceImpl service = new ClinicServiceImpl()
-		service.visitRepository = visitStub
+		ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub)
 		shouldFail(DataAccessException) { service.saveVisit(visit) }
 	}
 
@@ -50,14 +50,17 @@ class ClinicServiceImplTest {
 	public void testSaveVisitLogsConfirmationError() throws Exception {
 		def visitStub = {} as VisitRepository
 		def confirmationStub = {throw new RuntimeException("Oops")} as ConfirmationService
+
 		def logMessage
-		Logger loggerMock = [error:{message -> logMessage = message}] as Logger
-		ClinicServiceImpl service = new ClinicServiceImpl()
-		service.visitRepository = visitStub
-		service.confirmationService = confirmationStub
+		def loggerMock = [error: {message -> logMessage = message}] as Logger
+
+		ClinicServiceImpl service = new ClinicServiceImpl(visitRepository: visitStub, confirmationService: confirmationStub)
+
 		ClinicServiceImpl.metaClass.setAttribute(service, "log", loggerMock)
+
 		service.saveVisit(visit)
-		assert logMessage == "Failed to send confirmation message: Oops"
+
+		assert logMessage.contains("Oops")
 	}
 
 }

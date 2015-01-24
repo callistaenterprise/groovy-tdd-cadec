@@ -30,8 +30,10 @@ class ConfirmationServiceImplTest {
 	@Test
 	void testConfirmationMessage() {
 		def destination, message
-		service.messageSender = {d, m -> destination = d; message = m; true} as MessageSender
+		service.messageSender = {d, m -> destination = d; message = m; return true} as MessageSender
+		
 		service.sendConfirmationMessage(visit)
+
 		assert destination == visit.pet.owner.email
 		def visitMessage = new XmlSlurper().parseText(message)
 		assert visitMessage.description == visit.description
