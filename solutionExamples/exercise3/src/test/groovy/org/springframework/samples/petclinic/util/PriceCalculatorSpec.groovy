@@ -19,7 +19,7 @@ class PriceCalculatorSpec extends Specification {
 	def "price for pet with age #age and #noOfVisits visits is #price"() {
 		given:
 		noOfVisits.times {
-			visits << new Visit(pet)
+			visits << new Visit(pet: pet)
 		}
 		pet.visits = visits
 
